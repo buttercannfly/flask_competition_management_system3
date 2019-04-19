@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    身份：{{ identity }}<br>
+    id：{{ id }}
+{% if identity =='赛事主办方' %}
+    <a href={{ url_for('put_cop',id=id,identity=identity) }}>发布竞赛信息</a>
+    {% endif %}
+ <ul class="notice-list">
+    {% for com_info in com_infos %}
+    <li href={{ url_for('sign_up') }}>
+        {{ com_info.name }}<br>
+        {{ com_info.abstract }}<br>
+        报名截止日期:{{ com_info.sign_time }}<br>
+        竞赛开始日期:{{ com_info.start_time }}<br>
+        竞赛结束日期:{{ com_info.end_time }}<br>
+        主办方:{{ com_info.holder }}
+    </li>
+ {% endfor %}
+ </ul>
+{% endblock %}
