@@ -14,7 +14,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-
 class LoginForm(Form):
     username = TextField("username", [validators.Required()])
     password = PasswordField("password", [validators.Required()])
@@ -26,6 +25,28 @@ class InfoForm(Form):
     start_time = TextField("start_time", [validators.required()])
     end_time = TextField("end_time", [validators.Required()])
     simplify = TextField("simplify", [validators.Required()])
+
+
+@app.route('/<identity>/<id>/<name>/com_stus')
+def com_stus(id,identity,name):
+    com_new=Com_info.query.filter_by(name=name).first()
+    print(com_new.students)
+    return render_template("com_stus.html",id=id,identity=identity,com_new=com_new)
+
+
+@app.route('/<identity>/<id>/<name>/sc')
+def signup_sc(id,identity,name):
+    com_detail = Com_info.query.filter_by(name=name).first()
+    student1 = Student.query.filter_by(id=id).first()
+    student1.com_infos.append(com_detail)
+    db.session.commit()
+    return render_template('signup_sc.html', id=id, identity=identity, com_detail=com_detail)
+
+
+@app.route('/<identity>/<id>/<name>/detail')
+def detail(id,identity,name):
+    com_detail = Com_info.query.filter_by(name=name).first()
+    return render_template('detail.html', id=id, identity=identity, com_detail=com_detail)
 
 
 @app.route('/home/put_cop/<identity>/<id>', methods=['GET', 'POST'])  # 发布竞赛信息
@@ -51,16 +72,17 @@ def put_cop(id, identity):
             print('competition exists')
             return render_template('put_cop.html', id=id, identity=identity)
         else:
-            com_info = Com_info(name=name, sign_time=sign_time, start_time=start_time,end_time=end_time,abstract=simplify, holder=hold)
+            com_info = Com_info(name=name, sign_time=sign_time, start_time=start_time, end_time=end_time,
+                                abstract=simplify, holder=hold)
             db.session.add(com_info)
             db.session.commit()
             return redirect(url_for('home', id=id, identity=identity))
     return render_template('put_cop.html', id=id, identity=identity)
 
 
-@app.route('/sign_up')
-def sign_up():
-    return render_template('signup.html')
+@app.route('/<identity>/<id>/sign_up/<com_info>')
+def sign_up(identity, id, com_info):
+    return render_template('signup.html', identity=identity, id=id, com_info=com_info)
 
 
 @app.route('/register', methods=['GET', 'POST'])

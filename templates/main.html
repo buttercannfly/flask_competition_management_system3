@@ -7,13 +7,19 @@
     {% endif %}
  <ul class="notice-list">
     {% for com_info in com_infos %}
-    <li href={{ url_for('sign_up') }}>
-        {{ com_info.name }}<br>
-        {{ com_info.abstract }}<br>
-        报名截止日期:{{ com_info.sign_time }}<br>
-        竞赛开始日期:{{ com_info.start_time }}<br>
-        竞赛结束日期:{{ com_info.end_time }}<br>
-        主办方:{{ com_info.holder }}
+    <li>
+{#        <a href={{ url_for('sign_up',id=id,identity=identity,com_info=com_info) }}>#}
+{#            {{ com_info.name }}<br></a>#}
+        {{ com_info.name }}
+{#        {{ com_info.abstract }}<br>#}
+{#        报名截止日期:{{ com_info.sign_time }}<br>#}
+{#        竞赛开始日期:{{ com_info.start_time }}<br>#}
+{#        竞赛结束日期:{{ com_info.end_time }}<br>#}
+{#        主办方:{{ com_info.holder }}<br>#}
+        <button type="submit" class="btn btn-default form-group-sm"><a href ={{ url_for("detail",id=id,identity=identity,name=com_info.name) }}>了解详情</a></button>
+        {% if identity == '学生' %}
+            <button type="submit" class="btn btn-default form-group-sm"><a href = {{ url_for("signup_sc",id=id,identity=identity,name=com_info.name) }}>报名参赛</a></button>
+    {% endif %}
     </li>
  {% endfor %}
  </ul>

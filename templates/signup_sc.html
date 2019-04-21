@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
+<span class="text-success">报名成功</span>
+<button type="button" class="btn btn-default"><a href={{ url_for("home",id=id,identity=identity) }}>返回首页</a></button>
+{% endblock %}
