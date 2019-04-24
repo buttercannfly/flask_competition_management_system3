@@ -1,10 +1,94 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>SB Admin - Register</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{{ url_for('static',filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+
+  <!-- Custom styles for this template-->
+  <link href="{{ url_for('static',filename='css/sb-admin.css') }}" rel="stylesheet">
+
 </head>
-<body>
+
+<body class="bg-dark">
+
+  <div class="container">
+    <div class="card card-register mx-auto mt-5">
+      <div class="card-header">Register an Account</div>
+      <div class="card-body">
+        <form method="post">
+            <div class="form-row">
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="text" id="id" name="id" class="form-control" placeholder="id" required="required" autofocus="autofocus">
+                  <label for="id">id</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="text" id="name" name="name" class="form-control" placeholder="请输入姓名" required="required">
+                  <label for="name">姓名</label>
+                </div>
+              </div>
+            </div>
+          <div class="form-group">
+              <div class="form-row">
+            <div class="col-md-6">
+            <div class="form-label-group">
+              <input type="text" id="age" name="age" class="form-control" placeholder="请输入年龄" required="required">
+              <label for="age">年龄</label>
+            </div>
+                </div>
+                  <div class="col-md-6">
+            <div class="form-label-group">
+              <input type="text" id="dept" class="form-control" name="dept" placeholder="请输入所属院系" required="required">
+              <label for="dept">院系</label>
+            </div>
+                </div>
+                  </div>
+          </div>
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="Password" required="required">
+                  <label for="inputPassword">Password</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm password" required="required">
+                  <label for="confirmPassword">Confirm password</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-default btn-block" type="submit"><a class="btn btn-primary btn-block">Register</a></button>
+        </form>
+        <div class="text-center">
+          <a class="d-block small mt-3" href={{ url_for('hello_world') }}>Login Page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{{ url_for('static',filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
 </body>
+
 </html>

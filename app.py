@@ -27,11 +27,28 @@ class InfoForm(Form):
     simplify = TextField("simplify", [validators.Required()])
 
 
+@app.route('/<identity>/<id>/raise_answer')
+def raise_answer(id,identity):
+    return render_template('raise_answer.html',id=id,identity=identity)
+
+
+@app.route('/<identity>/<id>/self_center')
+def self_center(id,identity):
+    if identity == '学生':
+        lt = Student.query.filter_by(id=id).first()
+    elif identity == '老师':
+        lt = Teacher.query.filter_by(id=id).first()
+    elif identity == '赛事主办方':
+        lt = Holder.query.filter_by(id=id).first()
+    else:
+        lt = Monitor.query.filter_by(id=id).first()
+    return render_template("self_center.html", id=id, identity=identity, lt=lt)
+
+
 @app.route('/<identity>/<id>/<name>/com_stus')
 def com_stus(id,identity,name):
-    com_new=Com_info.query.filter_by(name=name).first()
-    print(com_new.students)
-    return render_template("com_stus.html",id=id,identity=identity,com_new=com_new)
+    com_new = Com_info.query.filter_by(name=name).first()
+    return render_template("com_stus.html", id=id, identity=identity, com_new=com_new)
 
 
 @app.route('/<identity>/<id>/<name>/sc')
@@ -87,6 +104,24 @@ def sign_up(identity, id, com_info):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if request.method == 'POST':
+        id = request.values.get("id")
+        name = request.values.get("name")
+        age = request.values.get("age")
+        dept = request.values.get("dept")
+        password1 = request.values.get("inputPassword")
+        password2 = request.values.get("confirmPassword")
+        print(id,name,age,dept,password1)
+        if password1 == password2:
+            if Student.query.filter_by(id=id).first():
+                    return render_template('register.html')
+            else:
+                    student_t = Student(id=id, name=name,
+                                    age=age, dept=dept,
+                                    password=password1)
+                    db.session.add(student_t)
+                    db.session.commit()
+                    return redirect(url_for('hello_world'))
     return render_template('register.html')
 
 
@@ -100,12 +135,14 @@ def hello_world():
     myForm = LoginForm(request.form)
     if request.method == 'POST':
         identity = request.values.get("manufacturer")
-        id = myForm.username.data
-        password = myForm.password.data
+        print(identity)
+        id = request.values.get("id")
+        print(id)
+        password = request.values.get("password")
         if identity == '学生':
             lt = Student.query.filter_by(id=id, password=password).first()
         elif identity == '老师':
-            pass
+            lt = Teacher.query.filter_by(id=id,password=password).first()
         elif identity == '赛事主办方':
             lt = Holder.query.filter_by(id=id, password=password).first()
         else:
@@ -121,8 +158,13 @@ def hello_world():
 @app.route('/home/<identity>/<id>')  # 主页
 def home(id, identity):
     com_infos = Com_info.query.all()
-    print(com_infos)
     return render_template('main.html', id=id, identity=identity, com_infos=com_infos)
+
+
+@app.route('/<identity>/<id>/com_list')
+def com_list(id,identity):
+    com_infos = Com_info.query.all()
+    return render_template('com_list.html',id=id,identity=identity,com_infos=com_infos)
 
 
 @app.errorhandler(404)

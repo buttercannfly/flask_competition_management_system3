@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}参赛信息{% endblock %}
+
+{% block content %}
+    <ul class="notice-list">
+        {% for l1 in com_new.students %}
+            <li>
+            {{ l1.name }}
+            {{ l1.age }}
+            {{ l1.dept }}
+            </li>
+        {% endfor %}
+    </ul>
+    <button type="button" class="btn btn-default" ><a href={{ url_for("home",id=id,identity=identity) }}>返回主页</a></button>
+{% endblock %}

@@ -1,39 +1,45 @@
-{% extends "bootstrap/base.html"%}
- 
-{% block title%}学生竞赛信息系统{% endblock %}<!--覆盖title标签-->
- 
-{% block navbar %}
-<nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="/">竞赛系统</a>
+{%extends "bootstrap/base.html"%}
+
+{%block title %}Flask{% endblock %}
+
+{%block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle"
+            data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Flasky</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/" class="active">Home</a></li>
+                <li><a href="/">Login</a></li>
+                {% if id %}
+                <li class="top-right"><a href={{ url_for("self_center",id=id,identity=identity) }}>个人中心</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
-    <div>
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="/">用户登录</a></li>
-            <li><a href="#">信息</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    Java
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">jmeter</a></li>
-                    <li><a href="#">EJB</a></li>
-                    <li><a href="#">Jasper Report</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">分离的链接</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">另一个分离的链接</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    </div>
-</nav>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('ul.nav>li').click(function (e) {
+            e.preventDefault();
+            $('ul.nav>li').removeClass('active');
+            $(this).addClass('active');
+        });
+    });
+</script>
 {% endblock %}
 {% block content %}
 <div class="container">
-    {% block page_content %}{% endblock %}
+    <div class="page-header">
+        <h1>Hello, {{ name }}!</h1>
+    </div>
 </div>
 {% endblock %}
