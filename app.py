@@ -1,8 +1,9 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, current_user, login_user, login_required
 from wtforms import Form, TextField, PasswordField, validators
 import hello
+import datetime
 from hello import *
 
 hello  # 调用hello初始化模板
@@ -12,6 +13,7 @@ bootstrap = Bootstrap(app)
 app.debug = True
 login_manager = LoginManager()
 login_manager.init_app(app)
+app.secret_key = 'random string'
 
 
 class LoginForm(Form):
@@ -29,7 +31,7 @@ class InfoForm(Form):
 
 @app.route('/<identity>/<id>/raise_answer')
 def raise_answer(id,identity):
-    return render_template('raise_answer.html',id=id,identity=identity)
+    return render_template('raise_answer.html', id=id, identity=identity)
 
 
 @app.route('/<identity>/<id>/self_center')
@@ -54,16 +56,29 @@ def com_stus(id,identity,name):
 @app.route('/<identity>/<id>/<name>/sc')
 def signup_sc(id,identity,name):
     com_detail = Com_info.query.filter_by(name=name).first()
-    student1 = Student.query.filter_by(id=id).first()
-    student1.com_infos.append(com_detail)
-    db.session.commit()
-    return render_template('signup_sc.html', id=id, identity=identity, com_detail=com_detail)
+    return render_template('signup_sc.html', id=id, identity=identity, name=com_detail.name)
 
 
-@app.route('/<identity>/<id>/<name>/detail')
+@app.route('/<identity>/<id>/<name>/detail', methods=['GET', 'POST'])
 def detail(id,identity,name):
     com_detail = Com_info.query.filter_by(name=name).first()
-    return render_template('detail.html', id=id, identity=identity, com_detail=com_detail)
+    student1 = Student.query.filter_by(id=id).first()
+    count = 0
+    print(com_detail.status)
+    error = None
+    if request.method == 'POST':
+        for stu_comm in student1.com_infos:
+            if stu_comm == com_detail:
+                count = count + 1
+        if count == 1:
+            error='你已经报名过了'
+            return render_template('detail.html', id=id, identity=identity, com_detail=com_detail,error=error)
+        else:
+            error=None
+            student1.com_infos.append(com_detail)
+            db.session.commit()
+            return redirect(url_for('signup_sc',id=id,identity=identity,name=name))
+    return render_template('detail.html', id=id, identity=identity, com_detail=com_detail,error=error)
 
 
 @app.route('/home/put_cop/<identity>/<id>', methods=['GET', 'POST'])  # 发布竞赛信息
@@ -158,6 +173,17 @@ def hello_world():
 @app.route('/home/<identity>/<id>')  # 主页
 def home(id, identity):
     com_infos = Com_info.query.all()
+    today = datetime.date.today()
+    for com_info in com_infos:
+        if com_info.sign_time >= today:
+            com_info.status = 1
+            db.session.commit()
+        elif com_info.start_time <= today <= com_info.end_time:
+            com_info.status = 2
+            db.session.commit()
+        elif com_info.end_time<=today:
+            com_info.status =0
+            db.session.commit()
     return render_template('main.html', id=id, identity=identity, com_infos=com_infos)
 
 

@@ -45,9 +45,10 @@ class Com_info(db.Model):  # 竞赛信息
     name = db.Column(db.String(20))
     holder = db.Column(db.String(20))
     id = db.Column(db.Integer, primary_key=True)
-    sign_time = db.Column(db.String(20))
-    start_time = db.Column(db.String(20))
-    end_time = db.Column(db.String(20))
+    status = db.Column(db.Integer)
+    sign_time = db.Column(db.Date)
+    start_time = db.Column(db.Date)
+    end_time = db.Column(db.Date)
     abstract = db.Column(db.String(200))
 
     def __repr__(self):
@@ -92,22 +93,22 @@ student1 = Student(id='zwk', password='123456', name='张伟康', dept='CS', age
 student2 = Student(id='gjj', password='123456', name='郭健健', dept='CS', age=23)
 com_info1 = Com_info(name='程序设计大赛', sign_time='2019-04-01', start_time='2019-04-12', end_time='2019-04-13', holder='华为',
                      abstract='星期五晚上8.30在信息馆有宣讲会')
-com_info2 = Com_info(name='浙江省英语写作比赛', sign_time='2019-04-02', start_time='2019-04-04', end_time='2019-04-12',
+com_info2 = Com_info(name='浙江省英语写作比赛', sign_time='2019-04-28', start_time='2019-04-29', end_time='2019-05-01',
                      holder='生物学院', abstract='3.25号晚上在一号楼A401有宣讲会')
-com_info3 = Com_info(name='浙江省大学生证券投资竞赛', sign_time='2019-01-03', start_time='2019-02-12',
-                     end_time='2019-04-01', abstract='', holder='金融学院')
-com_info4 = Com_info(name='浙江省大学生管理案例竞赛', sign_time='2019-01-04', start_time='2019-03-12',
-                     end_time='2019-04-01', abstract='', holder='管理学院')
+com_info3 = Com_info(name='浙江省大学生证券投资竞赛', sign_time='2019-05-03', start_time='2019-05-12',
+                     end_time='2019-05-14', abstract='', holder='金融学院')
+com_info4 = Com_info(name='浙江省大学生管理案例竞赛', sign_time='2019-04-22', start_time='2019-04-24',
+                     end_time='2019-05-30', abstract='', holder='管理学院')
 com_info5 = Com_info(name='浙江省大学生汉语口语竞赛',sign_time='2019-03-23',start_time='2019-03-29',
                      end_time='2019-04-01', abstract='', holder='基础教学部')
 com_info6 = Com_info(name='浙江省体育产业创新创业大赛',sign_time='2019-03-23',start_time='2019-03-29',
                      end_time='2019-04-01', abstract='', holder='团委')
 com_info7 = Com_info(name='浙江省大学生摄影大赛',sign_time='2019-03-23',start_time='2019-03-29',
                      end_time='2019-04-01', abstract='', holder='艺术设计学院')
-com_info8 = Com_info(name='浙江省大学生广告艺术设计大赛',sign_time='2019-03-23',start_time='2019-03-29',
-                     end_time='2019-04-01', abstract='', holder='艺术设计学院')
-com_info9 = Com_info(name='浙江省大学生职业生涯规划大赛',sign_time='2019-03-23',start_time='2019-03-29',
-                     end_time='2019-04-01', abstract='', holder='就业处')
+com_info8 = Com_info(name='浙江省大学生广告艺术设计大赛',sign_time='2019-04-25',start_time='2019-04-29',
+                     end_time='2019-05-01', abstract='', holder='艺术设计学院')
+com_info9 = Com_info(name='浙江省大学生职业生涯规划大赛',sign_time='2019-04-25',start_time='2019-04-29',
+                     end_time='2019-05-01', abstract='', holder='就业处')
 teacher1 = Teacher(id='xiaotong',
                    password='123456',
                    name='肖桐',

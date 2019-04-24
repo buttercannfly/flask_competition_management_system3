@@ -135,18 +135,25 @@
         </div>
       </div>
     </div>
-  </div><div>
+
+  </div>
+  <form method="post">
+      <div>
       <span class="text-primary">竞赛名称：{{ com_detail.name }}</span><br>
     <span class="text-info">报名截止时间：{{ com_detail.sign_time }}</span><br>
     <span class="text-info">竞赛开始时间：{{ com_detail.start_time }}</span><br>
     <span class="text-info">竞赛结束时间：{{ com_detail.end_time }}</span><br>
     <span class="text-muted">{{ com_detail.abstract }}</span><br>
-    {% if identity=='学生' %}
-    <a class="btn btn-info btn-block" href={{ url_for("signup_sc",id=id,identity=identity,name=com_detail.name) }}>报名参加比赛</a>
+    {% if identity=='学生' and com_detail.status == 1%}
+    <button type="submit" class="btn btn-info btn-block"><a class="btn btn-info ">报名参加比赛</a></button>
     {% endif %}
     <a class="btn btn-dark btn-block" href={{ url_for("com_stus",id=id,identity=identity,name=com_detail.name) }}>查看参赛队伍</a>
   <a class="btn btn-primary btn-block" href={{ url_for("home",id=id,identity=identity) }}>返回</a>
+      {% if error %}
+          {{ error }}
+      {% endif %}
 </div>
+  </form>
   <!-- Bootstrap core JavaScript-->
   <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
