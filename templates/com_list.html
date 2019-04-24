@@ -126,6 +126,7 @@
       <tr>
           <th>竞赛名称</th>
           <th>主办方</th>
+            <th>状态</th>
           <th>详细信息</th>
           <th>报名参赛</th>
           <th><a href="">更多</a></th>
@@ -136,8 +137,13 @@
       <tr>
           <td>{{ com_info.name }}</td>
           <td>{{ com_info.holder }}</td>
+          <td>{% if com_info.status == 0 %}
+              <font color="#dc143c">比赛结束</font>{% endif %}
+          {% if com_info.status == 1 %}<font color="#1e90ff">报名中</font>{% endif %}
+          {% if com_info.status == 2 %}<font color="#7fff00">进行中</font>{% endif %}
+          </td>
           <td><button type="submit" class="btn btn-default form-group-sm"><a href ={{ url_for("detail",id=id,identity=identity,name=com_info.name) }}>了解详情</a></button></td>
-          <td>{% if identity == '学生' %}
+          <td>{% if identity == '学生' and com_info.status==1 %}
             <button type="submit" class="btn btn-default form-group-sm"><a href = {{ url_for("signup_sc",id=id,identity=identity,name=com_info.name) }}>报名参赛</a></button>
     {% endif %}</td>
       </tr>
