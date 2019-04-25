@@ -47,10 +47,23 @@ def self_center(id,identity):
     return render_template("self_center.html", id=id, identity=identity, lt=lt)
 
 
-@app.route('/<identity>/<id>/<name>/com_stus')
-def com_stus(id,identity,name):
+@app.route('/<identity>/<id>/<name>/<status>/com_stus')
+def com_stus(id,identity,name,status):
     com_new = Com_info.query.filter_by(name=name).first()
-    return render_template("com_stus.html", id=id, identity=identity, com_new=com_new)
+    print(status)
+    print(identity)
+    return render_template("com_stus.html", id=id, identity=identity,name=name, com_new=com_new,status=status)
+
+
+@app.route('/<identity>/<id>/<name>/stu_manage',methods=['GET','POST'])
+def stu_manage(id,identity,name):
+    com_temp = Com_info.query.filter_by(name=name).first()
+    student_list = com_temp.students
+    if request.method == 'POST':
+        grade = request.values.get("grade")
+        print(grade)
+
+    return render_template('stu_manage.html', id=id, identity=identity, name=name,student_list=student_list)
 
 
 @app.route('/<identity>/<id>/<name>/sc')
@@ -170,7 +183,7 @@ def hello_world():
     return render_template('login.html', form=myForm)
 
 
-@app.route('/home/<identity>/<id>')  # 主页
+@app.route('/home/<identity>/<id>',methods=['GET','POST'])  # 主页
 def home(id, identity):
     com_infos = Com_info.query.all()
     today = datetime.date.today()

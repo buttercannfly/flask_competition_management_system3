@@ -23,7 +23,8 @@ class Monitor(db.Model):  # 管理员
 
 t_stu_com = db.Table("table_stu_com",
                      db.Column("stu_id", db.String(20), db.ForeignKey("students.id"), primary_key=True),
-                     db.Column("com_id", db.Integer, db.ForeignKey("Com_infos.id"), primary_key=True)
+                     db.Column("com_id", db.Integer, db.ForeignKey("Com_infos.id"), primary_key=True),
+                     db.Column("grade",db.String(20))
                      )
 
 
@@ -78,6 +79,7 @@ class Teacher(db.Model):  # 老师
     name = db.Column(db.String(20), unique=True)
     academic = db.Column(db.String(20))
     email = db.Column(db.String(20))
+
     # students = db.relationship('Student', backref='teacher', lazy='dynamic')
 
     def __repr__(self):
@@ -89,8 +91,12 @@ db.create_all()
 notice = Notice(name='程序设计大赛')
 monitor = Monitor(id='butter', password='123456')
 holder = Holder(id='ztgt', password='123456', name='中天钢铁')
-student1 = Student(id='zwk', password='123456', name='张伟康', dept='CS', age=22)
-student2 = Student(id='gjj', password='123456', name='郭健健', dept='CS', age=23)
+student1 = Student(id='zwk', password='123456', name='张伟康', dept='计算机学院', age=22)
+student2 = Student(id='gjj', password='123456', name='郭健健', dept='管理学院', age=23)
+student3 = Student(id='xiaoyun', password='123456', name='肖云', dept='计算机学院', age=23)
+student4 = Student(id='zhangjx', password='123456', name='张佳祥', dept='计算机学院', age=23)
+student5 = Student(id='hantianzhu',password='123456',name='韩天柱',dept='计算机学院',age=23)
+student6 = Student(id='zhangsan',password='123456',name='张三',dept='理学院',age=24)
 com_info1 = Com_info(name='程序设计大赛', sign_time='2019-04-01', start_time='2019-04-12', end_time='2019-04-13', holder='华为',
                      abstract='星期五晚上8.30在信息馆有宣讲会')
 com_info2 = Com_info(name='浙江省英语写作比赛', sign_time='2019-04-28', start_time='2019-04-29', end_time='2019-05-01',
@@ -99,15 +105,15 @@ com_info3 = Com_info(name='浙江省大学生证券投资竞赛', sign_time='201
                      end_time='2019-05-14', abstract='', holder='金融学院')
 com_info4 = Com_info(name='浙江省大学生管理案例竞赛', sign_time='2019-04-22', start_time='2019-04-24',
                      end_time='2019-05-30', abstract='', holder='管理学院')
-com_info5 = Com_info(name='浙江省大学生汉语口语竞赛',sign_time='2019-03-23',start_time='2019-03-29',
+com_info5 = Com_info(name='浙江省大学生汉语口语竞赛', sign_time='2019-03-23', start_time='2019-03-29',
                      end_time='2019-04-01', abstract='', holder='基础教学部')
-com_info6 = Com_info(name='浙江省体育产业创新创业大赛',sign_time='2019-03-23',start_time='2019-03-29',
+com_info6 = Com_info(name='浙江省体育产业创新创业大赛', sign_time='2019-03-23', start_time='2019-03-29',
                      end_time='2019-04-01', abstract='', holder='团委')
-com_info7 = Com_info(name='浙江省大学生摄影大赛',sign_time='2019-03-23',start_time='2019-03-29',
+com_info7 = Com_info(name='浙江省大学生摄影大赛', sign_time='2019-03-23', start_time='2019-03-29',
                      end_time='2019-04-01', abstract='', holder='艺术设计学院')
-com_info8 = Com_info(name='浙江省大学生广告艺术设计大赛',sign_time='2019-04-25',start_time='2019-04-29',
+com_info8 = Com_info(name='浙江省大学生广告艺术设计大赛', sign_time='2019-04-25', start_time='2019-04-29',
                      end_time='2019-05-01', abstract='', holder='艺术设计学院')
-com_info9 = Com_info(name='浙江省大学生职业生涯规划大赛',sign_time='2019-04-25',start_time='2019-04-29',
+com_info9 = Com_info(name='浙江省大学生职业生涯规划大赛', sign_time='2019-04-25', start_time='2019-04-29',
                      end_time='2019-05-01', abstract='', holder='就业处')
 teacher1 = Teacher(id='xiaotong',
                    password='123456',
@@ -115,8 +121,36 @@ teacher1 = Teacher(id='xiaotong',
                    academic='计算机学院',
                    email='1710085142@qq.com')
 student1.com_infos.append(com_info2)
+student1.com_infos.append(com_info1)
+student1.com_infos.append(com_info4)
+student1.com_infos.append(com_info5)
+student1.com_infos.append(com_info6)
 student2.com_infos.append(com_info1)
 student2.com_infos.append(com_info2)
+student2.com_infos.append(com_info4)
+student2.com_infos.append(com_info6)
+student2.com_infos.append(com_info8)
+student2.com_infos.append(com_info9)
+student3.com_infos.append(com_info2)
+student3.com_infos.append(com_info1)
+student3.com_infos.append(com_info4)
+student3.com_infos.append(com_info5)
+student3.com_infos.append(com_info7)
+student4.com_infos.append(com_info2)
+student4.com_infos.append(com_info1)
+student4.com_infos.append(com_info4)
+student4.com_infos.append(com_info5)
+student4.com_infos.append(com_info7)
+student5.com_infos.append(com_info3)
+student5.com_infos.append(com_info2)
+student5.com_infos.append(com_info6)
+student5.com_infos.append(com_info8)
+student5.com_infos.append(com_info9)
+student6.com_infos.append(com_info3)
+student6.com_infos.append(com_info4)
+student6.com_infos.append(com_info5)
+student6.com_infos.append(com_info7)
+student6.com_infos.append(com_info9)
 db.session.add(teacher1)
 db.session.add(holder)
 db.session.add(student1)

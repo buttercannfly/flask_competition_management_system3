@@ -147,7 +147,7 @@
     {% if identity=='学生' and com_detail.status == 1%}
     <button type="submit" class="btn btn-info btn-block"><a class="btn btn-info ">报名参加比赛</a></button>
     {% endif %}
-    <a class="btn btn-dark btn-block" href={{ url_for("com_stus",id=id,identity=identity,name=com_detail.name) }}>查看参赛队伍</a>
+    <a class="btn btn-dark btn-block" href={{ url_for("com_stus",id=id,identity=identity,name=com_detail.name,status=com_detail.status) }}>查看参赛选手</a>
   <a class="btn btn-primary btn-block" href={{ url_for("home",id=id,identity=identity) }}>返回</a>
       {% if error %}
           {{ error }}

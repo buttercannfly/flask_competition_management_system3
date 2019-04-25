@@ -118,7 +118,7 @@
           <span>赛事信息</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="tables.html">
+        <a class="nav-link">
           <i class="fas fa-fw fa-table"></i>
           <span>获奖查询</span></a>
       </li>
@@ -155,24 +155,21 @@
           <th>主办方</th>
           <th>状态</th>
           <th>详细信息</th>
-          <th>报名参赛</th>
           <th><a href={{ url_for('com_list',id=id,identity=identity) }}>更多</a></th>
       </tr>
       </thead>
       <tbody>
       {% for i in range(5) %}
       <tr>
-          <td>{{ com_infos[i].name }}</td>
+          <td id="name" name='name'>{{ com_infos[i].name }}</td>
           <td>{{ com_infos[i].holder }}</td>
           <td>{% if com_infos[i].status == 0 %}
               <font color="#dc143c">比赛结束</font>{% endif %}
           {% if com_infos[i].status == 1 %}<font color="#1e90ff">报名中</font>{% endif %}
           {% if com_infos[i].status == 2 %}<font color="#7fff00">进行中</font>{% endif %}
           </td>
-          <td><button type="submit" class="btn btn-default form-group-sm"><a href ={{ url_for("detail",id=id,identity=identity,name=com_infos[i].name) }}>了解详情</a></button></td>
-          <td>{% if identity == '学生' and com_infos[i].status==1 %}
-            <button type="submit" class="btn btn-default form-group-sm"><a href = {{ url_for("signup_sc",id=id,identity=identity,name=com_infos[i].name) }}>报名参赛</a></button>
-    {% endif %}</td>
+          <td><button class="btn btn-default form-group-sm"><a href ={{ url_for("detail",id=id,identity=identity,name=com_infos[i].name) }}>了解详情</a></button></td>
+    </td>
       </tr>
       {% endfor %}
       </tbody>

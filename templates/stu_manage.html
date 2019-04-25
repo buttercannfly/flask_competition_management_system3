@@ -26,24 +26,12 @@
 
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-    <a class="navbar-brand mr-1" href="index.html">Flasky</a>
+    <a class="navbar-brand mr-1">Flasky</a>
 
     <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
       <i class="fas fa-bars"></i>
     </button>
     <ul class="navbar-nav  ml-auto mr-0 mr-md-3 my-2 my-md-0">
-{#      <li class="nav-item dropdown no-arrow mx-1">#}
-{#        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
-{#          <i class="fas fa-bell fa-fw"></i>#}
-{#          <span class="badge badge-danger">9+</span>#}
-{#        </a>#}
-{#        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alertsDropdown">#}
-{#          <a class="dropdown-item" href="#">Action</a>#}
-{#          <a class="dropdown-item" href="#">Another action</a>#}
-{#          <div class="dropdown-divider"></div>#}
-{#          <a class="dropdown-item" href="#">Something else here</a>#}
-{#        </div>#}
-{#      </li>#}
       <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-user-circle fa-fw"></i>
@@ -69,23 +57,7 @@
           <span>首页</span>
         </a>
       </li>
-{#      <li class="nav-item dropdown">#}
-{#        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
-{#          <i class="fas fa-fw fa-folder"></i>#}
-{#          <span>Pages</span>#}
-{#        </a>#}
-{#        <div class="dropdown-menu" aria-labelledby="pagesDropdown">#}
-{#          <h6 class="dropdown-header">Login Screens:</h6>#}
-{#          <a class="dropdown-item" href="login.html">Login</a>#}
-{#          <a class="dropdown-item" href="register.html">Register</a>#}
-{#          <a class="dropdown-item" href="forgot-password.html">Forgot Password</a>#}
-{#          <div class="dropdown-divider"></div>#}
-{#          <h6 class="dropdown-header">Other Pages:</h6>#}
-{#          <a class="dropdown-item" href="404.html">404 Page</a>#}
-{#          <a class="dropdown-item" href="blank.html">Blank Page</a>#}
-{#        </div>#}
-{#      </li>#}
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href={{ url_for('com_list',id=id,identity=identity) }}>
           <i class="fas fa-fw fa-chart-area"></i>
           <span>赛事信息</span></a>
@@ -121,48 +93,35 @@
       </div>
     </div>
   </div>
-  <table class="table table-hover" >
-      <thead>
-      <tr>
-          <th>竞赛名称</th>
-          <th>主办方</th>
-            <th>状态</th>
-          <th>详细信息</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for com_info in com_infos %}
-      <tr>
-          <td>{{ com_info.name }}</td>
-          <td>{{ com_info.holder }}</td>
-          <td>{% if com_info.status == 0 %}
-              <font color="#dc143c">比赛结束</font>{% endif %}
-          {% if com_info.status == 1 %}<font color="#1e90ff">报名中</font>{% endif %}
-          {% if com_info.status == 2 %}<font color="#7fff00">进行中</font>{% endif %}
-          </td>
-          <td><button type="submit" class="btn btn-default form-group-sm"><a href ={{ url_for("detail",id=id,identity=identity,name=com_info.name) }}>了解详情</a></button></td>
-      </tr>
-      {% endfor %}
-      </tbody>
-  </table>
-{#       <ul class="list-group">#}
-{#    {% for com_info in com_infos %}#}
-{#    <li class = "list-group-item">#}
-{#        <a href={{ url_for('sign_up',id=id,identity=identity,com_info=com_info) }}>#}
-{#            {{ com_info.name }}<br></a>#}
-{#        {{ com_info.name }}#}
-{#        {{ com_info.abstract }}<br>#}
-{#        报名截止日期:{{ com_info.sign_time }}<br>#}
-{#        竞赛开始日期:{{ com_info.start_time }}<br>#}
-{#        竞赛结束日期:{{ com_info.end_time }}<br>#}
-{#        主办方:{{ com_info.holder }}<br>#}
-{#        <button type="submit" class="btn btn-default form-group-sm"><a href ={{ url_for("detail",id=id,identity=identity,name=com_info.name) }}>了解详情</a></button>#}
-{#        {% if identity == '学生' %}#}
-{#            <button type="submit" class="btn btn-default form-group-sm"><a href = {{ url_for("signup_sc",id=id,identity=identity,name=com_info.name) }}>报名参赛</a></button>#}
-{#    {% endif %}#}
-{#    </li>#}
-{# {% endfor %}#}
-{# </ul>#}
+  <form role="form" method="post" style="width:100%">
+        <table style="width:100%">
+            <thead>
+            <tr>
+                <th>学生姓名</th>
+                <th>年龄</th>
+                <th>学院</th>
+                <th>获奖</th>
+{#                <th></th>#}
+            </tr>
+            {% for li in student_list %}
+                <tr>
+                <td>{{ li.name }}</td>
+                <td>{{ li.age }}</td>
+                <td>{{ li.dept }}</td>
+                <td>
+                <select class="form-control" name="grade" id="grade">
+                    <option>一等奖</option>
+                    <option>二等奖</option>
+                    <option>三等奖</option>
+                    <option>未得奖</option>
+                </select></td>
+{#                <td type="submit" class="btn btn-dark btn-block">提交</td>#}
+                </tr>
+            {% endfor %}
+            </thead>
+        </table>
+  <button type="submit" class="btn btn-dark btn-block">提交</button>
+</form>
 
   <!-- Bootstrap core JavaScript-->
   <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>
