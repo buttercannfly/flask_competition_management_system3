@@ -103,24 +103,21 @@
                 <th>获奖</th>
 {#                <th></th>#}
             </tr>
-            {% for li in student_list %}
                 <tr>
-                <td>{{ li.name }}</td>
-                <td>{{ li.age }}</td>
-                <td>{{ li.dept }}</td>
+                <td>{{ student_list[index].name }}</td>
+                <td>{{ student_list[index].age }}</td>
+                <td>{{ student_list[index].dept }}</td>
                 <td>
                 <select class="form-control" name="grade" id="grade">
-                    <option>一等奖</option>
-                    <option>二等奖</option>
-                    <option>三等奖</option>
-                    <option>未得奖</option>
+                    {% for ll in award %}
+                        <option>{{ ll }}</option>
+                    {% endfor %}
                 </select></td>
 {#                <td type="submit" class="btn btn-dark btn-block">提交</td>#}
                 </tr>
-            {% endfor %}
             </thead>
         </table>
-  <button type="submit" class="btn btn-dark btn-block">提交</button>
+  <button type="submit" class="btn btn-dark btn-block">提交成绩并转到下一位</button>
 </form>
 
   <!-- Bootstrap core JavaScript-->

@@ -123,7 +123,7 @@
       </div>
     </div>
   </div>
-<form role="form" method="post" style="width:100%">
+<form role="form" method="post" style="width:100%" enctype='multipart/form-data'>
         <div class="form-group">
             <label for="name">竞赛名称</label>
             <input type="text" class="form-control" id="name" placeholder="请输入竞赛名称" name="name">
@@ -144,6 +144,10 @@
             <label for="simplify">简介</label>
             <input type="text" class="form-control" id="simplify" placeholder="请输入竞赛简介" name="simplify">
         </div>
+    <div class="form-group form-group-lg">
+        <label for="file">相关文件</label><br>
+        <input type="file" id="file" name="file">
+    </div>
         <button type="submit" class="btn btn-primary">提交</button>
     </form>
   <!-- Bootstrap core JavaScript-->

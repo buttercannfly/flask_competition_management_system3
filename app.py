@@ -1,10 +1,15 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+import random
+
+from flask import Flask, render_template, redirect, url_for, request, flash, g, current_app
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, current_user, login_user, login_required
+from werkzeug.utils import secure_filename
 from wtforms import Form, TextField, PasswordField, validators
 import hello
 import datetime
+import os
 from hello import *
+from os import path
 
 hello  # 调用hello初始化模板
 app = Flask(__name__)
@@ -30,12 +35,12 @@ class InfoForm(Form):
 
 
 @app.route('/<identity>/<id>/raise_answer')
-def raise_answer(id,identity):
+def raise_answer(id, identity):
     return render_template('raise_answer.html', id=id, identity=identity)
 
 
 @app.route('/<identity>/<id>/self_center')
-def self_center(id,identity):
+def self_center(id, identity):
     if identity == '学生':
         lt = Student.query.filter_by(id=id).first()
     elif identity == '老师':
@@ -48,32 +53,54 @@ def self_center(id,identity):
 
 
 @app.route('/<identity>/<id>/<name>/<status>/com_stus')
-def com_stus(id,identity,name,status):
+def com_stus(id, identity, name, status):
     com_new = Com_info.query.filter_by(name=name).first()
-    print(status)
-    print(identity)
-    return render_template("com_stus.html", id=id, identity=identity,name=name, com_new=com_new,status=status)
+    # print(com_new.id)
+    # print(status)
+    # print(identity)
+    sql = " SELECT grade FROM table_stu_com WHERE com_id = '%s'" % com_new.id
+    lst = db.session.execute(sql)
+    lst_done = []
+    for ll in lst:
+        print(ll[0])
+        lst_done.append(ll[0])
+
+    return render_template("com_stus.html", id=id, identity=identity, name=name, com_new=com_new, status=status,
+                           lst_done=lst_done, len=len(com_new.students))
 
 
-@app.route('/<identity>/<id>/<name>/stu_manage',methods=['GET','POST'])
-def stu_manage(id,identity,name):
+@app.route('/<identity>/<id>/<name>/<index>/stu_manage', methods=['GET', 'POST'])
+def stu_manage(id, identity, name, index):
     com_temp = Com_info.query.filter_by(name=name).first()
+    com_infos = Com_info.query.all()
     student_list = com_temp.students
+    award_list = com_temp.award.split()
     if request.method == 'POST':
-        grade = request.values.get("grade")
-        print(grade)
+        grade1 = request.values.get("grade")
+        sql = "UPDATE table_stu_com SET grade = '%s' WHERE stu_id = '%s' AND com_id = '%s'" % (
+            grade1, student_list[int(index)].id, com_temp.id)
+        db.session.execute(sql)
+        db.session.commit()
+        index = int(index) + 1
+        if index < len(student_list):
+            return redirect(url_for('stu_manage', id=id, identity=identity, name=name, index=index))
+        else:
+            com_temp.status = 0
+            db.session.commit()
+            return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos)
 
-    return render_template('stu_manage.html', id=id, identity=identity, name=name,student_list=student_list)
+    return render_template('stu_manage.html', id=id, identity=identity, name=name, student_list=student_list,
+                           index=int(index), award=award_list)
 
 
 @app.route('/<identity>/<id>/<name>/sc')
-def signup_sc(id,identity,name):
+def signup_sc(id, identity, name):
     com_detail = Com_info.query.filter_by(name=name).first()
     return render_template('signup_sc.html', id=id, identity=identity, name=com_detail.name)
 
 
 @app.route('/<identity>/<id>/<name>/detail', methods=['GET', 'POST'])
-def detail(id,identity,name):
+def detail(id, identity, name):
     com_detail = Com_info.query.filter_by(name=name).first()
     student1 = Student.query.filter_by(id=id).first()
     count = 0
@@ -84,14 +111,20 @@ def detail(id,identity,name):
             if stu_comm == com_detail:
                 count = count + 1
         if count == 1:
-            error='你已经报名过了'
-            return render_template('detail.html', id=id, identity=identity, com_detail=com_detail,error=error)
+            error = '你已经报名过了'
+            return render_template('detail.html', id=id, identity=identity, com_detail=com_detail, error=error)
         else:
-            error=None
+            error = None
             student1.com_infos.append(com_detail)
             db.session.commit()
-            return redirect(url_for('signup_sc',id=id,identity=identity,name=name))
-    return render_template('detail.html', id=id, identity=identity, com_detail=com_detail,error=error)
+            return redirect(url_for('signup_sc', id=id, identity=identity, name=name))
+    return render_template('detail.html', id=id, identity=identity, com_detail=com_detail, error=error)
+
+
+@app.route('/<identity>/<id>/<name>/notice_detail')
+def notice_detail(id, identity, name):
+    notice_temp = Notice.query.filter_by(name=name).first()
+    return render_template('notice_detail.html', id=id, identity=identity, notice=notice_temp)
 
 
 @app.route('/home/put_cop/<identity>/<id>', methods=['GET', 'POST'])  # 发布竞赛信息
@@ -111,14 +144,22 @@ def put_cop(id, identity):
         # print(end_time)
         simplify = request.values.get("simplify")
         # print(simplify)
+        f = request.files['file']
+        fname=secure_filename(f.filename)
+        ext = fname.rsplit('.', 1)[1]
+        new_filename = str(name)+'.'+ext
+        basepath = os.path.dirname(__file__)
+        upload_path = os.path.join(basepath, 'static\\uploads', new_filename)
+        f.save(upload_path)
         lt = Com_info.query.filter_by(name=name, sign_time=sign_time, start_time=start_time, end_time=end_time,
                                       abstract=simplify).first()
         if lt:
             print('competition exists')
             return render_template('put_cop.html', id=id, identity=identity)
         else:
+
             com_info = Com_info(name=name, sign_time=sign_time, start_time=start_time, end_time=end_time,
-                                abstract=simplify, holder=hold)
+                                status=1, abstract=simplify, holder=hold)
             db.session.add(com_info)
             db.session.commit()
             return redirect(url_for('home', id=id, identity=identity))
@@ -139,17 +180,17 @@ def register():
         dept = request.values.get("dept")
         password1 = request.values.get("inputPassword")
         password2 = request.values.get("confirmPassword")
-        print(id,name,age,dept,password1)
+        print(id, name, age, dept, password1)
         if password1 == password2:
             if Student.query.filter_by(id=id).first():
-                    return render_template('register.html')
+                return render_template('register.html')
             else:
-                    student_t = Student(id=id, name=name,
+                student_t = Student(id=id, name=name,
                                     age=age, dept=dept,
                                     password=password1)
-                    db.session.add(student_t)
-                    db.session.commit()
-                    return redirect(url_for('hello_world'))
+                db.session.add(student_t)
+                db.session.commit()
+                return redirect(url_for('hello_world'))
     return render_template('register.html')
 
 
@@ -170,7 +211,7 @@ def hello_world():
         if identity == '学生':
             lt = Student.query.filter_by(id=id, password=password).first()
         elif identity == '老师':
-            lt = Teacher.query.filter_by(id=id,password=password).first()
+            lt = Teacher.query.filter_by(id=id, password=password).first()
         elif identity == '赛事主办方':
             lt = Holder.query.filter_by(id=id, password=password).first()
         else:
@@ -183,27 +224,28 @@ def hello_world():
     return render_template('login.html', form=myForm)
 
 
-@app.route('/home/<identity>/<id>',methods=['GET','POST'])  # 主页
+@app.route('/home/<identity>/<id>', methods=['GET', 'POST'])  # 主页
 def home(id, identity):
     com_infos = Com_info.query.all()
-    today = datetime.date.today()
-    for com_info in com_infos:
-        if com_info.sign_time >= today:
-            com_info.status = 1
-            db.session.commit()
-        elif com_info.start_time <= today <= com_info.end_time:
-            com_info.status = 2
-            db.session.commit()
-        elif com_info.end_time<=today:
-            com_info.status =0
-            db.session.commit()
-    return render_template('main.html', id=id, identity=identity, com_infos=com_infos)
+    notice_list = Notice.query.all()
+    g.com_list = com_infos
+    print(g.com_list)
+    return render_template('main.html', id=id, identity=identity,
+                           com_infos=com_infos, notice_list=notice_list)
 
 
 @app.route('/<identity>/<id>/com_list')
-def com_list(id,identity):
+def com_list(id, identity):
     com_infos = Com_info.query.all()
-    return render_template('com_list.html',id=id,identity=identity,com_infos=com_infos)
+    return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos
+                           # , paginate=paginate
+                           )
+
+
+@app.route('/<identity>/<id>/notice_list')
+def notice_list(id, identity):
+    notice_lists = Notice.query.all()
+    return render_template('notice_list.html', id=id, identity=identity, notice_lists=notice_lists)
 
 
 @app.errorhandler(404)

@@ -1,3 +1,4 @@
+{% import "_macros.html" as macros %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,7 +29,7 @@
 
     <a class="navbar-brand mr-1" href="index.html">Flasky</a>
 
-    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
+    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle">
       <i class="fas fa-bars"></i>
     </button>
     <ul class="navbar-nav  ml-auto mr-0 mr-md-3 my-2 my-md-0">
@@ -121,7 +122,8 @@
       </div>
     </div>
   </div>
-  <table class="table table-hover" >
+  <div style="width:100%">
+  <table class="table table-hover" style="width:100%">
       <thead>
       <tr>
           <th>竞赛名称</th>
@@ -145,24 +147,25 @@
       {% endfor %}
       </tbody>
   </table>
-{#       <ul class="list-group">#}
-{#    {% for com_info in com_infos %}#}
-{#    <li class = "list-group-item">#}
-{#        <a href={{ url_for('sign_up',id=id,identity=identity,com_info=com_info) }}>#}
-{#            {{ com_info.name }}<br></a>#}
-{#        {{ com_info.name }}#}
-{#        {{ com_info.abstract }}<br>#}
-{#        报名截止日期:{{ com_info.sign_time }}<br>#}
-{#        竞赛开始日期:{{ com_info.start_time }}<br>#}
-{#        竞赛结束日期:{{ com_info.end_time }}<br>#}
-{#        主办方:{{ com_info.holder }}<br>#}
-{#        <button type="submit" class="btn btn-default form-group-sm"><a href ={{ url_for("detail",id=id,identity=identity,name=com_info.name) }}>了解详情</a></button>#}
-{#        {% if identity == '学生' %}#}
-{#            <button type="submit" class="btn btn-default form-group-sm"><a href = {{ url_for("signup_sc",id=id,identity=identity,name=com_info.name) }}>报名参赛</a></button>#}
+  </div>
+{#  {%if pagination%}#}
+{#    <div class="pagination">#}
+{#        {{ macros.pagination_widget(pagination, url_for('com_list',id=id,iden) }}#}
+{#    </div>#}
+{#{% endif %}#}
+{#  <div>#}
+{#      {% if paginate.has_prev %}#}
+{#        <a href={{ url_for('com_list',id=id,identity=identity,page=paginate.prev_num) }}>上一页</a>#}
 {#    {% endif %}#}
-{#    </li>#}
-{# {% endfor %}#}
-{# </ul>#}
+{#    页码：#}
+{#    {% for i in paginate.iter_pages() %}#}
+{#        <a href= {{ url_for('com_list',id=id,identity=identity,page= i)}} >{{ i }}</a>#}
+{#    {% endfor %}#}
+{##}
+{#    {% if paginate.has_next %}#}
+{#        <a href= {{ url_for('com_list',id=id,identity=identity,page= paginate.next_num) }}>下一页</a>#}
+{#    {% endif %}#}
+{# </div>#}
 
   <!-- Bootstrap core JavaScript-->
   <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>

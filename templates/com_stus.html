@@ -42,7 +42,7 @@
 {#{% endblock %}#}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:width="http://www.w3.org/1999/xhtml">
 
 <head>
 
@@ -137,35 +137,34 @@
     </div>
   </div>
   <div class="vertical">
-<div>
-      <table class="table table-hover">
+<div style="width:100%">
+      <table class="table table-hover " style="width:100%">
           <thead>
           <tr>
               <th>报名人员</th>
               <th>年龄</th>
               <th>所属院系</th>
+              {% if status == '0' %}
+                  <th>奖项</th>
+              {% endif %}
           </tr>
           </thead>
           <tbody>
-          {% for li in com_new.students %}
+          {% for li in range(len) %}
               <tr>
-                <td>{{ li.name }}</td>
-              <td>{{ li.age }}</td>
-              <td>{{ li.dept }}</td>
+                <td>{{ com_new.students[li].name }}</td>
+              <td>{{ com_new.students[li].age }}</td>
+              <td>{{ com_new.students[li].dept }}</td>
+              {% if status == '0' %}
+                  <td>{{ lst_done[li] }}</td>
+              {% endif %}
               </tr>
           {% endfor %}
-          {#        {% for l1 in com_new.students %}#}
-{#            <li>#}
-{#            {{ l1.name }}#}
-{#            {{ l1.age }}#}
-{#            {{ l1.dept }}#}
-{#            </li>#}
-{#        {% endfor %}#}
           </tbody>
       </table>
 </div>
   {% if identity=='老师' and status == '2' %}
-    <a class="btn  btn-dark" href={{ url_for("stu_manage",id=id,identity=identity,name=name) }}>管理参赛选手成绩</a>
+    <a class="btn  btn-dark" href={{ url_for("stu_manage",id=id,identity=identity,name=name,index=0) }}>管理参赛选手成绩</a>
   {% endif %}
   </div>
   <!-- Bootstrap core JavaScript-->

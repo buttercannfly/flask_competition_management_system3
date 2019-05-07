@@ -148,14 +148,15 @@
       </div>
     </div>
   </div>
-  <table class="table table-hover" >
+  <div style="width:100%">
+  <table class="table table-hover" style="width:100%">
       <thead>
       <tr>
           <th>竞赛名称</th>
           <th>主办方</th>
           <th>状态</th>
           <th>详细信息</th>
-          <th><a href={{ url_for('com_list',id=id,identity=identity) }}>更多</a></th>
+          <th><a href={{ url_for('com_list',id=id,identity=identity) }}>更多...</a></th>
       </tr>
       </thead>
       <tbody>
@@ -174,6 +175,28 @@
       {% endfor %}
       </tbody>
   </table>
+  <table class="table table-hover" style="width:100%">
+      <thead>
+      <tr>
+          <th>通知公告</th>
+          <th>发布时间</th>
+          <th></th>
+          <th><a href={{ url_for('notice_list',id=id,identity=identity) }}>更多...</a></th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for i in range(3) %}
+      <tr>
+          <td>{{ notice_list[i].name }}</td>
+          <td>{{ notice_list[i].put_time }}</td>
+          <td><button class="btn btn-default form-group-sm"><a href ={{ url_for("notice_detail",id=id,identity=identity,name=notice_list[i].name) }}>了解详情</a></button></td>
+    </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+  </table>
+  </div>
+
 {#  <table class="table table-hover">#}
 {#      <thead>#}
 {#      <tr>#}

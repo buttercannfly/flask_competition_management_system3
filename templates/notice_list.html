@@ -1,4 +1,4 @@
-
+{% import "_macros.html" as macros %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,10 +29,22 @@
 
     <a class="navbar-brand mr-1" href="index.html">Flasky</a>
 
-    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
+    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle">
       <i class="fas fa-bars"></i>
     </button>
     <ul class="navbar-nav  ml-auto mr-0 mr-md-3 my-2 my-md-0">
+{#      <li class="nav-item dropdown no-arrow mx-1">#}
+{#        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#          <i class="fas fa-bell fa-fw"></i>#}
+{#          <span class="badge badge-danger">9+</span>#}
+{#        </a>#}
+{#        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alertsDropdown">#}
+{#          <a class="dropdown-item" href="#">Action</a>#}
+{#          <a class="dropdown-item" href="#">Another action</a>#}
+{#          <div class="dropdown-divider"></div>#}
+{#          <a class="dropdown-item" href="#">Something else here</a>#}
+{#        </div>#}
+{#      </li>#}
       <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-user-circle fa-fw"></i>
@@ -52,19 +64,35 @@
 
     <!-- Sidebar -->
     <ul class="sidebar navbar-nav">
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href={{ url_for('home',id=id,identity=identity) }}>
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>首页</span>
         </a>
       </li>
-      <li class="nav-item">
+{#      <li class="nav-item dropdown">#}
+{#        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#          <i class="fas fa-fw fa-folder"></i>#}
+{#          <span>Pages</span>#}
+{#        </a>#}
+{#        <div class="dropdown-menu" aria-labelledby="pagesDropdown">#}
+{#          <h6 class="dropdown-header">Login Screens:</h6>#}
+{#          <a class="dropdown-item" href="login.html">Login</a>#}
+{#          <a class="dropdown-item" href="register.html">Register</a>#}
+{#          <a class="dropdown-item" href="forgot-password.html">Forgot Password</a>#}
+{#          <div class="dropdown-divider"></div>#}
+{#          <h6 class="dropdown-header">Other Pages:</h6>#}
+{#          <a class="dropdown-item" href="404.html">404 Page</a>#}
+{#          <a class="dropdown-item" href="blank.html">Blank Page</a>#}
+{#        </div>#}
+{#      </li>#}
+      <li class="nav-item active">
         <a class="nav-link" href={{ url_for('com_list',id=id,identity=identity) }}>
           <i class="fas fa-fw fa-chart-area"></i>
           <span>赛事信息</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="">
+        <a class="nav-link">
           <i class="fas fa-fw fa-table"></i>
           <span>获奖查询</span></a>
       </li>
@@ -93,47 +121,48 @@
         </div>
       </div>
     </div>
-
   </div>
-  <form method="post">
-      <div>
-      <table class="table-hover table">
-          <thead>
-            <tr>
-                <th>竞赛名称</th>
-                <th>报名截止时间</th>
-                <th>竞赛开始时间</th>
-                <th>竞赛结束时间</th>
-                <th>备注</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-                <td>{{ com_detail.name }}</td>
-                <td>{{ com_detail.sign_time }}</td>
-                <td>{{ com_detail.start_time }}</td>
-                <td>{{ com_detail.end_time }}</td>
-                <td>{{ com_detail.abstract }}</td>
-            </tr>
-          </tbody>
-      </table>
-       <a href="/static/uploads/{{ com_detail.name }}.doc" download="{{ com_detail.name }}.doc">下载附件:{{ com_detail.name }}.doc</a>
+  <div style="width:100%">
+  <table class="table table-hover" style="width:100%">
+      <thead>
+      <tr>
+          <th>竞赛名称</th>
+          <th>主办方</th>
+            <th>状态</th>
+          <th>详细信息</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for notice_list in notice_lists %}
+      <tr>
+          <td>{{ notice_list.name }}</td>
+          <td>{{ notice_list.put_time }}
+          </td>
+          <td><button type="submit" class="btn btn-default form-group-sm"><a href ={{ url_for("notice_detail",id=id,identity=identity,name=notice_list.name) }}>了解详情</a></button></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+  </table>
+  </div>
+{#  {%if pagination%}#}
+{#    <div class="pagination">#}
+{#        {{ macros.pagination_widget(pagination, url_for('com_list',id=id,iden) }}#}
+{#    </div>#}
+{#{% endif %}#}
+{#  <div>#}
+{#      {% if paginate.has_prev %}#}
+{#        <a href={{ url_for('com_list',id=id,identity=identity,page=paginate.prev_num) }}>上一页</a>#}
+{#    {% endif %}#}
+{#    页码：#}
+{#    {% for i in paginate.iter_pages() %}#}
+{#        <a href= {{ url_for('com_list',id=id,identity=identity,page= i)}} >{{ i }}</a>#}
+{#    {% endfor %}#}
+{##}
+{#    {% if paginate.has_next %}#}
+{#        <a href= {{ url_for('com_list',id=id,identity=identity,page= paginate.next_num) }}>下一页</a>#}
+{#    {% endif %}#}
+{# </div>#}
 
-{#      <span class="text-primary">竞赛名称：{{ com_detail.name }}</span><br>#}
-{#    <span class="text-info">报名截止时间：{{ com_detail.sign_time }}</span><br>#}
-{#    <span class="text-info">竞赛开始时间：{{ com_detail.start_time }}</span><br>#}
-{#    <span class="text-info">竞赛结束时间：{{ com_detail.end_time }}</span><br>#}
-{#    <span class="text-muted">{{ com_detail.abstract }}</span><br>#}
-    {% if identity=='学生' and com_detail.status == 1%}
-    <button type="submit" class="btn btn-info btn-block"><a class="btn btn-info ">报名参加比赛</a></button>
-    {% endif %}
-    <a class="btn btn-dark btn-block" href={{ url_for("com_stus",id=id,identity=identity,name=com_detail.name,status=com_detail.status) }}>查看参赛选手</a>
-  <a class="btn btn-primary btn-block" href={{ url_for("home",id=id,identity=identity) }}>返回</a>
-      {% if error %}
-          {{ error }}
-      {% endif %}
-</div>
-  </form>
   <!-- Bootstrap core JavaScript-->
   <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
