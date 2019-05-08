@@ -2,7 +2,7 @@ import random
 
 from flask import Flask, render_template, redirect, url_for, request, flash, g, current_app
 from flask_bootstrap import Bootstrap
-from flask_login import LoginManager, current_user, login_user, login_required
+from flask_login import LoginManager, current_user, login_user, login_required, UserMixin
 from werkzeug.utils import secure_filename
 from wtforms import Form, TextField, PasswordField, validators
 import hello
@@ -16,9 +16,35 @@ app = Flask(__name__)
 # app.secret_key = ''
 bootstrap = Bootstrap(app)
 app.debug = True
-login_manager = LoginManager()
+login_manager = LoginManager()  # 创建LoginManager实例
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
+login_manager.login_message = 'Access denied.'
 login_manager.init_app(app)
 app.secret_key = 'random string'
+
+
+class User(UserMixin):
+    pass
+
+
+users = [
+    {'id': 'zwk', 'password': '123456'},
+    {'id': 'gjj', 'password': '123456'}
+]
+
+
+def query_user(user_id):
+    for user in users:
+        if user_id == user['id']:
+            return user
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    if query_user(user_id) is not None:
+        curr_user = User()
+        curr_user.id = user_id
 
 
 class LoginForm(Form):
@@ -144,26 +170,49 @@ def put_cop(id, identity):
         # print(end_time)
         simplify = request.values.get("simplify")
         # print(simplify)
+        com_level = request.values.get("com_level")
+        com_place = request.values.get("com_place")
+        org_party = request.values.get("org_party")
+        teacher = request.values.get("teacher")
+        put_time = datetime.date.today()
         f = request.files['file']
-        fname=secure_filename(f.filename)
-        ext = fname.rsplit('.', 1)[1]
-        new_filename = str(name)+'.'+ext
-        basepath = os.path.dirname(__file__)
-        upload_path = os.path.join(basepath, 'static\\uploads', new_filename)
-        f.save(upload_path)
-        lt = Com_info.query.filter_by(name=name, sign_time=sign_time, start_time=start_time, end_time=end_time,
-                                      abstract=simplify).first()
+        fname = secure_filename(f.filename)
+        if fname:
+            ext = fname.rsplit('.', 1)[1]
+            new_filename = str(name) + '.' + ext
+            basepath = os.path.dirname(__file__)
+            upload_path = os.path.join(basepath, 'static\\uploads', new_filename)
+            f.save(upload_path)
+        lt = Com_info.query.filter_by(name=name).first()
         if lt:
             print('competition exists')
+            flash('已存在该竞赛')
             return render_template('put_cop.html', id=id, identity=identity)
         else:
-
-            com_info = Com_info(name=name, sign_time=sign_time, start_time=start_time, end_time=end_time,
-                                status=1, abstract=simplify, holder=hold)
-            db.session.add(com_info)
-            db.session.commit()
-            return redirect(url_for('home', id=id, identity=identity))
+            if varify_time(sign_time, start_time, end_time):
+                com_info = Com_info(name=name, sign_time=sign_time, start_time=start_time, end_time=end_time,
+                                    com_level=com_level, com_place=com_place, org_party=org_party,
+                                    teacher=teacher, put_time=put_time,
+                                    status=1, abstract=simplify, holder=hold)
+                db.session.add(com_info)
+                db.session.commit()
+                return redirect(url_for('home', id=id, identity=identity))
+            else:
+                flash('时间安排不合理')
     return render_template('put_cop.html', id=id, identity=identity)
+
+
+def varify_time(sign_time, start_time, end_time):
+    date = datetime.date.today()
+    today = datetime.datetime.strptime(str(date), '%Y-%m-%d')
+    sign_time = datetime.datetime.strptime(sign_time, '%Y-%m-%d')
+    start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d')
+    end_time = datetime.datetime.strptime(end_time, '%Y-%m-%d')
+    print(today, sign_time, start_time, end_time)
+    if today < sign_time < start_time < end_time:
+        return True
+    else:
+        return False
 
 
 @app.route('/<identity>/<id>/sign_up/<com_info>')
@@ -206,6 +255,8 @@ def hello_world():
         identity = request.values.get("manufacturer")
         print(identity)
         id = request.values.get("id")
+        user_id = id
+        user = query_user(user_id)
         print(id)
         password = request.values.get("password")
         if identity == '学生':
@@ -217,6 +268,10 @@ def hello_world():
         else:
             lt = Monitor.query.filter_by(id=id, password=password).first()
         if lt:
+            curr_user = User()
+            curr_user.id = user_id
+
+            login_user(curr_user)
             return redirect(url_for('home', identity=identity, id=id))
         else:
             message = "Login failed"
@@ -225,6 +280,7 @@ def hello_world():
 
 
 @app.route('/home/<identity>/<id>', methods=['GET', 'POST'])  # 主页
+# @login_required
 def home(id, identity):
     com_infos = Com_info.query.all()
     notice_list = Notice.query.all()

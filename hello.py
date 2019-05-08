@@ -52,6 +52,11 @@ class Com_info(db.Model):  # 竞赛信息
     status = db.Column(db.Integer)
     sign_time = db.Column(db.Date)
     start_time = db.Column(db.Date)
+    put_time = db.Column(db.Date)  # 发布时间
+    com_level = db.Column(db.String(20))  # 竞赛等级
+    org_party = db.Column(db.String(20))  # 组织单位
+    com_place = db.Column(db.String(20))  # 竞赛地点
+    teacher = db.Column(db.String(20))  # 指导教师
     end_time = db.Column(db.Date)
     abstract = db.Column(db.String(200))
     award = db.Column(db.String(40))
@@ -116,42 +121,61 @@ student11 = Student(id='kankang1', password='123456', name='刘闯', dept='信�
 student12 = Student(id='kankang2', password='123456', name='刘刘', dept='信息科学与技术学院', age=23)
 student13 = Student(id='kankang3', password='123456', name='刘宝', dept='信息科学与技术学院', age=23)
 com_info1 = Com_info(name='程序设计大赛', sign_time='2019-04-01', start_time='2019-04-12', end_time='2019-04-13', holder='华为',
+                     com_place='校内', com_level='省级', org_party='华为校园部', put_time='2019-03-12', teacher='赵四',
                      abstract='星期五晚上8.30在信息馆有宣讲会', award='一等奖 二等奖 三等奖 无奖')
 com_info2 = Com_info(name='浙江省英语写作比赛', sign_time='2019-04-28', start_time='2019-04-29', end_time='2019-05-01',
+                     com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                      holder='生物学院', abstract='3.25号晚上在一号楼A401有宣讲会', award='优胜奖 参与奖')
 com_info3 = Com_info(name='浙江省大学生证券投资竞赛', sign_time='2019-05-07', start_time='2019-05-12',
+                     com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                      end_time='2019-05-14', abstract='', holder='金融学院', award='一等奖 二等奖 三等奖 无奖')
 com_info4 = Com_info(name='浙江省大学生管理案例竞赛', sign_time='2019-04-22', start_time='2019-04-24',
+                     com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                      end_time='2019-05-30', abstract='', holder='管理学院', award='一等奖 二等奖 三等奖 无奖')
 com_info5 = Com_info(name='浙江省大学生汉语口语竞赛', sign_time='2019-03-23', start_time='2019-03-29',
+                     com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                      end_time='2019-04-01', abstract='', holder='基础教学部', award='一等奖 二等奖 三等奖 无奖')
 com_info6 = Com_info(name='浙江省体育产业创新创业大赛', sign_time='2019-03-23', start_time='2019-03-29',
+                     com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                      end_time='2019-04-01', abstract='', holder='团委', award='一等奖 二等奖 三等奖 无奖')
 com_info7 = Com_info(name='浙江省大学生摄影大赛', sign_time='2019-03-23', start_time='2019-03-29',
+                     com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                      end_time='2019-04-01', abstract='', holder='艺术设计学院', award='一等奖 二等奖 三等奖 无奖')
 com_info8 = Com_info(name='浙江省大学生广告艺术设计大赛', sign_time='2019-04-25', start_time='2019-04-29',
+                     com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                      end_time='2019-05-01', abstract='', holder='艺术设计学院', award='一等奖 二等奖 三等奖 无奖')
 com_info9 = Com_info(name='浙江省大学生职业生涯规划大赛', sign_time='2019-04-25', start_time='2019-04-29',
+                     com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                      end_time='2019-05-01', abstract='', holder='就业处', award='一等奖 二等奖 三等奖 无奖')
 com_info10 = Com_info(name='浙江省挑战杯大学生课外学术科技作品竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 com_info11 = Com_info(name='浙江省挑战杯大学生化工设计竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 com_info12 = Com_info(name='浙江省挑战杯大学生英语演讲竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 com_info13 = Com_info(name='浙江省挑战杯大学生财会信息化竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 com_info14 = Com_info(name='浙江省挑战杯大学生教学技能竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 com_info15 = Com_info(name='浙江省挑战杯大学生多媒体作品竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 com_info16 = Com_info(name='浙江省挑战杯大学生机械设计竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 com_info17 = Com_info(name='浙江省挑战杯大学生电子设计竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 com_info18 = Com_info(name='浙江省挑战杯大学生程序设计竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 com_info19 = Com_info(name='浙江省挑战杯大学生大学生创新创业竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 teacher1 = Teacher(id='xiaotong',
                    password='123456',
@@ -370,7 +394,7 @@ notice4 = Notice(name='2018-2019学年第二学期藕舫学院地面气象观测
                          '表（附照片）研究生院、滨江学院的如需报名可下载个人电子报名表，填写报名表后'
                          '打印交至中国气象局综合观测培训实习基地（南京）（南京信息工程大学大探基地）'
                          '104室。联系人：吴老师；电话：18795803392。')
-
+# notice5 = Notice(name=)
 
 db.session.add(notice1)
 db.session.add(notice2)
@@ -408,6 +432,7 @@ db.session.add(com_info10)
 db.session.commit()
 com_infos = Com_info.query.all()
 today = datetime.date.today()
+# print(today)
 for com_info in com_infos:
     if com_info.sign_time >= today:
         com_info.status = 1
@@ -425,6 +450,10 @@ for com_info in com_infos:
                 award_temp, stu_list.id, com_info.id)
             db.session.execute(sql)
         db.session.commit()
+    else:
+        com_info.status = 3
+        db.session.commit()
+    db.session.commit()
 # print(student1.com_infos)
 # print(student2.com_infos)
 # print(com_info1.students)

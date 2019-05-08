@@ -96,26 +96,91 @@
 
   </div>
   <form method="post">
-      <div>
-      <table class="table-hover table">
-          <thead>
-            <tr>
-                <th>竞赛名称</th>
-                <th>报名截止时间</th>
-                <th>竞赛开始时间</th>
-                <th>竞赛结束时间</th>
-                <th>备注</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-                <td>{{ com_detail.name }}</td>
-                <td>{{ com_detail.sign_time }}</td>
-                <td>{{ com_detail.start_time }}</td>
-                <td>{{ com_detail.end_time }}</td>
-                <td>{{ com_detail.abstract }}</td>
-            </tr>
-          </tbody>
+      <div style="margin: 10px; border: #cccccc 1px solid; padding: 5px;width: 1300px;">
+{#      <table class="table-hover table">#}
+{#          <thead>#}
+{#            <tr>#}
+{#                <th>竞赛名称</th>#}
+{#                <th>报名截止时间</th>#}
+{#                <th>竞赛开始时间</th>#}
+{#                <th>竞赛结束时间</th>#}
+{#                <th>备注</th>#}
+{#            </tr>#}
+{#          </thead>#}
+{#          <tbody>#}
+{#            <tr>#}
+{#                <td>{{ com_detail.name }}</td>#}
+{#                <td>{{ com_detail.sign_time }}</td>#}
+{#                <td>{{ com_detail.start_time }}</td>#}
+{#                <td>{{ com_detail.end_time }}</td>#}
+{#                <td>{{ com_detail.abstract }}</td>#}
+{#            </tr>#}
+{#          </tbody>#}
+{#      </table>#}
+      <table class="table" align="center">
+          <tr>
+              <td align="center">
+              <p>
+                  <font size="3" face="verdana">
+                  {{ com_detail.name }}
+                  </font><br>
+                  <font size="2">{% if com_detail.put_time %}
+                      {{ com_detail.put_time }}
+                  {% endif %}</font>
+              </p>
+              </td>
+          </tr>
+          <tr>
+              <td align="center">
+                  <img src="{{ url_for('static',filename='pic/line.jpg') }}" width="600" height="8">
+              </td>
+          </tr>
+          <tr>
+              <table width="80%">
+                  <tbody>
+                    <tr>
+                        <td align="left" style="border-left: 1px solid #990000;
+                                border-top: 1px solid #990000;
+                                border-right: 1px solid #990000;">竞赛主办方:{{ com_detail.holder }}</td>
+                    </tr>
+                  <tr>
+                      <td align="left" style="border-left: 1px solid #990000;
+                                border-top: 1px solid #990000;
+                                border-right: 1px solid #990000;">竞赛等级:{{ com_detail.com_level }}</td>
+                  </tr>
+                  <tr>
+                      <td align="left" style="border-left: 1px solid #990000;
+                                border-top: 1px solid #990000;
+                                border-right: 1px solid #990000;">报名截止时间:{{ com_detail.sign_time }}</td>
+                  </tr>
+                   <tr>
+                      <td align="left" style="border-left: 1px solid #990000;
+                                border-top: 1px solid #990000;
+                                border-right: 1px solid #990000;">比赛开始时间:{{ com_detail.start_time }}</td>
+                  </tr>
+                   <tr>
+                      <td align="left" style="border-left: 1px solid #990000;
+                                border-top: 1px solid #990000;
+                                border-right: 1px solid #990000;">比赛结束时间:{{ com_detail.end_time }}</td>
+                  </tr>
+                   <tr>
+                      <td align="left" style="border-left: 1px solid #990000;
+                                border-top: 1px solid #990000;
+                                border-right: 1px solid #990000;">竞赛组织单位:{{ com_detail.org_party }}</td>
+                  </tr>
+                   <tr>
+                      <td align="left" style="border-left: 1px solid #990000;
+                                border-top: 1px solid #990000;
+                                border-right: 1px solid #990000;">竞赛地点：{{ com_detail.com_place }}</td>
+                  </tr>
+                   <tr>
+                      <td align="left" style="border-left: 1px solid #990000;
+                                border-top: 1px solid #990000;
+                                border-right: 1px solid #990000;">指导教师:{{ com_detail.teacher }}</td>
+                  </tr>
+                  </tbody>
+              </table>
+          </tr>
       </table>
        <a href="/static/uploads/{{ com_detail.name }}.doc" download="{{ com_detail.name }}.doc">下载附件:{{ com_detail.name }}.doc</a>
 
@@ -125,10 +190,10 @@
 {#    <span class="text-info">竞赛结束时间：{{ com_detail.end_time }}</span><br>#}
 {#    <span class="text-muted">{{ com_detail.abstract }}</span><br>#}
     {% if identity=='学生' and com_detail.status == 1%}
-    <button type="submit" class="btn btn-info btn-block"><a class="btn btn-info ">报名参加比赛</a></button>
+    <button type="submit" class="btn btn-info btn-block" style="width: 200px;"><a class="btn btn-info ">报名参加比赛</a></button>
     {% endif %}
-    <a class="btn btn-dark btn-block" href={{ url_for("com_stus",id=id,identity=identity,name=com_detail.name,status=com_detail.status) }}>查看参赛选手</a>
-  <a class="btn btn-primary btn-block" href={{ url_for("home",id=id,identity=identity) }}>返回</a>
+    <a class="btn btn-dark btn-block" style="width: 200px;" href={{ url_for("com_stus",id=id,identity=identity,name=com_detail.name,status=com_detail.status) }}>查看参赛选手</a>
+  <a class="btn btn-primary btn-block" style="width: 200px;" href={{ url_for("home",id=id,identity=identity) }}>返回</a>
       {% if error %}
           {{ error }}
       {% endif %}

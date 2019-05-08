@@ -123,6 +123,14 @@
       </div>
     </div>
   </div>
+      <div style="width: 100%">
+          <div>
+              {% for message in get_flashed_messages() %}
+                    <div class="alert alert-success" style="text-align: center">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        <strong>{{ message }}</strong></div>
+                {% endfor %}
+          </div>
 <form role="form" method="post" style="width:100%" enctype='multipart/form-data'>
         <div class="form-group">
             <label for="name">竞赛名称</label>
@@ -140,16 +148,36 @@
             <label for="end_time">竞赛结束时间</label>
             <input type="date" class="form-control" id="end_time" placeholder="请输入结束日期" name="end_time">
         </div>
+        <div class="form-group">
+            <label for="com_level">竞赛等级</label>
+            <input type="text" class="form-control" id="com_level" placeholder="请输入竞赛等级" name="com_level">
+        </div>
+        <div class="form-group">
+            <label for="org_party">竞赛组织单位</label>
+            <input type="text" class="form-control" id="org_party" placeholder="请输入组织单位" name="org_party">
+        </div>
+        <div class="form-group">
+            <label for="com_place">竞赛地点</label>
+            <input type="text" class="form-control" id="com_place" placeholder="请输入竞赛地点" name="com_place">
+        </div>
+        <div class="form-group">
+            <label for="teacher">指导教师</label>
+            <input type="text" class="form-control" id="teacher" placeholder="请输入指导教师" name="teacher">
+        </div>
         <div class="form-group form-group-lg">
             <label for="simplify">简介</label>
             <input type="text" class="form-control" id="simplify" placeholder="请输入竞赛简介" name="simplify">
         </div>
+
     <div class="form-group form-group-lg">
         <label for="file">相关文件</label><br>
         <input type="file" id="file" name="file">
     </div>
         <button type="submit" class="btn btn-primary">提交</button>
     </form>
+
+          </div>
+
   <!-- Bootstrap core JavaScript-->
   <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
