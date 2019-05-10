@@ -110,6 +110,8 @@
           {{ lt.name }}<br>
           {% endif %}
           {% if identity == '学生' %}
+              所属院系：{{ lt.dept }}<br>
+            年龄：{{ lt.age }}
               <table class="table table-hover">
                     <thead>
                         <tr>
@@ -117,10 +119,20 @@
                             <th>获奖情况</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        {% for i in range(length) %}
+                            <tr>
+                                <td>{{ lt.com_infos[i].name }}</td>
+                                {% if grade_list[i] %}
+                                <td>{{ grade_list[i] }}</td>
+                                    {% else %}
+                            <td class="text-danger">暂未结束</td>
+                            {% endif %}
 
+                            </tr>
+                    {% endfor %}
+                    </tbody>
               </table>
-            所属院系：{{ lt.dept }}<br>
-            年龄：{{ lt.age }}<br>
 {#              <a href="" class="btn btn-primary btn-block">查看所获奖状</a><br>#}
       {% endif %}
             {% if identity == '赛事主办方' %}

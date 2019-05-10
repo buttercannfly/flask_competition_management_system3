@@ -9,6 +9,7 @@ import hello
 import datetime
 import os
 from hello import *
+import sys
 from os import path
 
 hello  # 调用hello初始化模板
@@ -40,6 +41,18 @@ def query_user(user_id):
             return user
 
 
+def check_name(str):
+    le = len(str)
+    index = 0
+    for ch in str:
+        if u'\u4e00' <= ch <= u'\u9fff':
+            index = index + 1
+    if index == le:
+        return True
+    else:
+        return False
+
+
 @login_manager.user_loader
 def load_user(user_id):
     if query_user(user_id) is not None:
@@ -67,23 +80,52 @@ def raise_answer(id, identity):
 
 @app.route('/<identity>/<id>/self_center')
 def self_center(id, identity):
+    length = 0
+    grade_list = 0
     if identity == '学生':
         lt = Student.query.filter_by(id=id).first()
+        items = lt.com_infos
+        length = len(items)
+        grade_list = []
+        for item in items:
+            sql = " SELECT grade FROM table_stu_com WHERE com_id = '%s' and stu_id ='%s'" % (item.id, id)
+            temp = db.session.execute(sql)
+            for ll in temp:
+                grade_list.append((ll[0]))
     elif identity == '老师':
         lt = Teacher.query.filter_by(id=id).first()
     elif identity == '赛事主办方':
         lt = Holder.query.filter_by(id=id).first()
     else:
         lt = Monitor.query.filter_by(id=id).first()
-    return render_template("self_center.html", id=id, identity=identity, lt=lt)
+    return render_template("self_center.html", id=id, identity=identity, lt=lt, grade_list=grade_list, length=length)
+
+
+@app.route('/<identity>/<id>/reset', methods=['GET', 'POST'])
+def reset(id, identity):
+    if request.method == 'POST':
+        pass1 = request.values.get('password')
+        pass2 = request.values.get('password1')
+        if pass1 == pass2:
+            com_infos = Com_info.query.all()
+            notice_list = Notice.query.all()
+            if identity == '学生':
+                Student.query.filter_by(id=id).update({'password': pass1})
+            elif identity == '老师':
+                Teacher.query.filter_by(id=id).update({'password': pass1})
+            elif identity == '赛事主办方':
+                Holder.query.filter_by(id=id).update({'password': pass1})
+            return redirect(url_for('home', id=id, identity=identity
+                                    , com_infos=com_infos, notice_list=notice_list))
+        else:
+            flash('两次密码不一致')
+            return render_template('reset.html', id=id, identity=identity)
+    return render_template('reset.html', id=id, identity=identity)
 
 
 @app.route('/<identity>/<id>/<name>/<status>/com_stus')
 def com_stus(id, identity, name, status):
     com_new = Com_info.query.filter_by(name=name).first()
-    # print(com_new.id)
-    # print(status)
-    # print(identity)
     sql = " SELECT grade FROM table_stu_com WHERE com_id = '%s'" % com_new.id
     lst = db.session.execute(sql)
     lst_done = []
@@ -232,14 +274,22 @@ def register():
         print(id, name, age, dept, password1)
         if password1 == password2:
             if Student.query.filter_by(id=id).first():
+                flash('用户已存在')
                 return render_template('register.html')
             else:
-                student_t = Student(id=id, name=name,
-                                    age=age, dept=dept,
-                                    password=password1)
-                db.session.add(student_t)
-                db.session.commit()
-                return redirect(url_for('hello_world'))
+                if check_name(name):
+                    student_t = Student(id=id, name=name,
+                                        age=age, dept=dept,
+                                        password=password1)
+                    db.session.add(student_t)
+                    db.session.commit()
+                    return redirect(url_for('hello_world'))
+                else:
+                    flash('请输入中文姓名')
+                    return render_template('register.html')
+        else:
+            flash('请确保两次密码一致')
+            return render_template('register.html')
     return render_template('register.html')
 
 

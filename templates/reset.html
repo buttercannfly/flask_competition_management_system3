@@ -1,0 +1,96 @@
+{#{% extends "base.html"%}#}
+{# #}
+{#{% block title%}学生竞赛信息系统{% endblock %}<!--覆盖title标签-->#}
+{##}
+{#{% block content %} <!--具体内容-->#}
+{#<div class="container">#}
+{# <div class="container">#}
+{#     {% if message %}{{ message }}{% endif %}#}
+{# <form method="post">#}
+{# <label for="identity">选择身份</label>#}
+{#     <select class="form-control" name="manufacturer" id="manufacturer">#}
+{#			<option >学生</option>#}
+{#			<option >老师</option>#}
+{#			<option>管理员</option>#}
+{#			<option>赛事主办方</option>#}
+{#		</select>#}
+{# <div class="form-group">#}
+{# <label for="username">用户名</label><br>#}
+{#{{ form.username }}#}
+{# </div>#}
+{# <div class="form-group">#}
+{# <label for="password">密码</label><br>#}
+{#{{ form.password }}#}
+{# </div>#}
+{# <button type="submit" class="btn btn-default">登录</button>#}
+{#     <button type="button" class="btn btn-default"><a href={{ url_for('register') }}>注册</a></button>#}
+{# </form>#}
+{# </div>#}
+{#</div>#}
+{#{% endblock %}#}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>ZWK Competition Management System - Login</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{{ url_for('static',filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+
+  <!-- Custom styles for this template-->
+  <link href="{{ url_for('static',filename='css/sb-admin.css') }}" rel="stylesheet">
+
+</head>
+
+<body class="bg-dark">
+
+  <div class="container">
+    <div class="card card-login mx-auto mt-5">
+      <div class="card-header">Reset</div>
+      <div class="card-body">
+        <form method="post">
+          <div class="form-group">
+            <div class="form-label-group">
+              <input type="password" id="password" name='password' class="form-control" placeholder="请输入新密码" required="required" autofocus="autofocus">
+              <label for="password">new password</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-label-group">
+              <input type="password" id="password1" name='password1' class="form-control" placeholder="Password" required="required">
+              <label for="password1">comfirm password</label>
+            </div>
+          </div>
+            <button type="submit" class="btn btn-default btn-block">
+              <a class="btn btn-primary btn-block">Submit</a>
+            </button>
+        </form>
+          <div>
+              {% for message in get_flashed_messages() %}
+                    <div class="alert alert-success" style="text-align: center">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        <strong>{{ message }}</strong></div>
+                {% endfor %}
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{{ url_for('static',filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
+</body>
+
+</html>

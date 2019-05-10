@@ -141,6 +141,7 @@
               <font color="#dc143c">比赛结束</font>{% endif %}
           {% if com_info.status == 1 %}<font color="#1e90ff">报名中</font>{% endif %}
           {% if com_info.status == 2 %}<font color="#7fff00">进行中</font>{% endif %}
+          {% if com_info.status == 3 %}<font color="black">报名截止</font>{% endif %}
           </td>
           <td><button type="submit" class="btn btn-default form-group-sm"><a href ={{ url_for("detail",id=id,identity=identity,name=com_info.name) }}>了解详情</a></button></td>
       </tr>

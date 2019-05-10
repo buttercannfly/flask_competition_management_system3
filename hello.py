@@ -168,13 +168,13 @@ com_info15 = Com_info(name='浙江省挑战杯大学生多媒体作品竞赛', s
 com_info16 = Com_info(name='浙江省挑战杯大学生机械设计竞赛', sign_time='2019-05-08', start_time='2019-05-10',
                       com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
-com_info17 = Com_info(name='浙江省挑战杯大学生电子设计竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+com_info17 = Com_info(name='浙江省挑战杯大学生电子设计竞赛', sign_time='2019-05-11', start_time='2019-05-12',
                       com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
-com_info18 = Com_info(name='浙江省挑战杯大学生程序设计竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+com_info18 = Com_info(name='浙江省挑战杯大学生程序设计竞赛', sign_time='2019-05-11', start_time='2019-05-12',
                       com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
-com_info19 = Com_info(name='浙江省挑战杯大学生大学生创新创业竞赛', sign_time='2019-05-08', start_time='2019-05-10',
+com_info19 = Com_info(name='浙江省挑战杯大学生大学生创新创业竞赛', sign_time='2019-05-11', start_time='2019-05-11',
                       com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12',
                       end_time='2019-05-12', abstract='', holder='挑战杯', award='一等奖 二等奖 三等奖 无奖')
 teacher1 = Teacher(id='xiaotong',

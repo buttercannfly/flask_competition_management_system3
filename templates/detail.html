@@ -183,12 +183,6 @@
           </tr>
       </table>
        <a href="/static/uploads/{{ com_detail.name }}.doc" download="{{ com_detail.name }}.doc">下载附件:{{ com_detail.name }}.doc</a>
-
-{#      <span class="text-primary">竞赛名称：{{ com_detail.name }}</span><br>#}
-{#    <span class="text-info">报名截止时间：{{ com_detail.sign_time }}</span><br>#}
-{#    <span class="text-info">竞赛开始时间：{{ com_detail.start_time }}</span><br>#}
-{#    <span class="text-info">竞赛结束时间：{{ com_detail.end_time }}</span><br>#}
-{#    <span class="text-muted">{{ com_detail.abstract }}</span><br>#}
     {% if identity=='学生' and com_detail.status == 1%}
     <button type="submit" class="btn btn-info btn-block" style="width: 200px;"><a class="btn btn-info ">报名参加比赛</a></button>
     {% endif %}

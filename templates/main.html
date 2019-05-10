@@ -77,6 +77,8 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
           <a class="dropdown-item" href={{ url_for('self_center',id=id,identity=identity) }}>个人中心</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href={{ url_for('reset',id=id,identity=identity) }}>修改密码</a>
 {#          <a class="dropdown-item" href="#">Activity Log</a>#}
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href={{ url_for('hello_world') }} data-toggle="modal" data-target="#logoutModal">Logout</a>
