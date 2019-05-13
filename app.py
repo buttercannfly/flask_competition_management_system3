@@ -2,43 +2,32 @@ import random
 
 from flask import Flask, render_template, redirect, url_for, request, flash, g, current_app
 from flask_bootstrap import Bootstrap
-from flask_login import LoginManager, current_user, login_user, login_required, UserMixin
 from werkzeug.utils import secure_filename
 from wtforms import Form, TextField, PasswordField, validators
 import hello
 import datetime
 import os
+import re
+import __init__
 from hello import *
 import sys
 from os import path
 
+__init__
 hello  # 调用hello初始化模板
 app = Flask(__name__)
 # app.secret_key = ''
 bootstrap = Bootstrap(app)
 app.debug = True
-login_manager = LoginManager()  # 创建LoginManager实例
-login_manager.login_view = 'login'
-login_manager.login_message_category = 'info'
-login_manager.login_message = 'Access denied.'
-login_manager.init_app(app)
-app.secret_key = 'random string'
 
 
-class User(UserMixin):
-    pass
-
-
-users = [
-    {'id': 'zwk', 'password': '123456'},
-    {'id': 'gjj', 'password': '123456'}
-]
-
-
-def query_user(user_id):
-    for user in users:
-        if user_id == user['id']:
-            return user
+# login_manager = LoginManager()  # 创建LoginManager实例.
+# login_manager.session_protection = 'strong'
+# login_manager.login_view = 'login'
+# login_manager.login_message_category = 'info'
+# login_manager.login_message = 'Access denied.'
+# login_manager.init_app(app)
+# app.secret_key = 'random string'
 
 
 def check_name(str):
@@ -51,13 +40,6 @@ def check_name(str):
         return True
     else:
         return False
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    if query_user(user_id) is not None:
-        curr_user = User()
-        curr_user.id = user_id
 
 
 class LoginForm(Form):
@@ -132,9 +114,23 @@ def com_stus(id, identity, name, status):
     for ll in lst:
         print(ll[0])
         lst_done.append(ll[0])
-
-    return render_template("com_stus.html", id=id, identity=identity, name=name, com_new=com_new, status=status,
-                           lst_done=lst_done, len=len(com_new.students))
+    teachers = com_new.teacher.split()
+    print(teachers)
+    judge = 0
+    if identity == '老师':
+        teacher_temp = Teacher.query.filter_by(id=id).first()
+        print(teacher_temp.name)
+        if teacher_temp.name in teachers:  # 判别是否是指导老师
+            print('sc')
+            judge = 1
+            return render_template("com_stus.html", id=id, identity=identity, name=name, com_new=com_new, status=status,
+                                   lst_done=lst_done, len=len(com_new.students), judge=judge)
+        else:
+            return render_template("com_stus.html", id=id, identity=identity, name=name, com_new=com_new, status=status,
+                                   lst_done=lst_done, len=len(com_new.students), judge=judge)
+    else:
+        return render_template("com_stus.html", id=id, identity=identity, name=name, com_new=com_new, status=status,
+                               lst_done=lst_done, len=len(com_new.students), judge=judge)
 
 
 @app.route('/<identity>/<id>/<name>/<index>/stu_manage', methods=['GET', 'POST'])
@@ -143,8 +139,23 @@ def stu_manage(id, identity, name, index):
     com_infos = Com_info.query.all()
     student_list = com_temp.students
     award_list = com_temp.award.split()
+    assign_list = com_temp.assign.split()
+    assign_list = list(map(int, assign_list))  # 字符串数组转换成int数组
     if request.method == 'POST':
+        print(award_list)
+        print(assign_list)
         grade1 = request.values.get("grade")
+        for i in range(len(award_list)):
+            if award_list[i] == grade1:
+                print('--')
+                assign_list[i] = assign_list[i] - 1
+                # print(assign_list)
+        ctr = str(assign_list[0])
+        print(ctr)
+        for i in range(1, len(award_list)):
+            ctr = ctr + ' ' + str(assign_list[i])
+        com_temp.assign = ctr
+        db.session.commit()
         sql = "UPDATE table_stu_com SET grade = '%s' WHERE stu_id = '%s' AND com_id = '%s'" % (
             grade1, student_list[int(index)].id, com_temp.id)
         db.session.execute(sql)
@@ -156,9 +167,9 @@ def stu_manage(id, identity, name, index):
             com_temp.status = 0
             db.session.commit()
             return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos)
-
+    length = len(award_list)
     return render_template('stu_manage.html', id=id, identity=identity, name=name, student_list=student_list,
-                           index=int(index), award=award_list)
+                           index=int(index), award=award_list, length=length, assign_list=assign_list)
 
 
 @app.route('/<identity>/<id>/<name>/sc')
@@ -175,6 +186,8 @@ def detail(id, identity, name):
     print(com_detail.status)
     error = None
     if request.method == 'POST':
+        print('min:', com_detail.min_p)
+        print('max:', com_detail.max_p)
         for stu_comm in student1.com_infos:
             if stu_comm == com_detail:
                 count = count + 1
@@ -182,11 +195,22 @@ def detail(id, identity, name):
             error = '你已经报名过了'
             return render_template('detail.html', id=id, identity=identity, com_detail=com_detail, error=error)
         else:
-            error = None
-            student1.com_infos.append(com_detail)
-            db.session.commit()
-            return redirect(url_for('signup_sc', id=id, identity=identity, name=name))
+            if com_detail.min_p == com_detail.max_p == 1:
+                student1.com_infos.append(com_detail)
+                db.session.commit()
+                return redirect(url_for('signup_sc', id=id, identity=identity, name=name))
+            else:
+                return redirect(url_for('esteam', id=id, identity=identity, name=name))
     return render_template('detail.html', id=id, identity=identity, com_detail=com_detail, error=error)
+
+
+@app.route('/<identity>/<id>/<name>/esteam',methods=['GET','POST'])
+def esteam(id, identity, name):
+    student1 = Student.query.filter_by(id=id).first()
+    if request.method == 'POST':
+        table = request.values.get("team")
+        return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
+    return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
 
 
 @app.route('/<identity>/<id>/<name>/notice_detail')
@@ -216,6 +240,9 @@ def put_cop(id, identity):
         com_place = request.values.get("com_place")
         org_party = request.values.get("org_party")
         teacher = request.values.get("teacher")
+        award = request.values.get("award")
+        assign = request.values.get("assign")
+        pattern = request.values.get("pattern")
         put_time = datetime.date.today()
         f = request.files['file']
         fname = secure_filename(f.filename)
@@ -231,11 +258,18 @@ def put_cop(id, identity):
             flash('已存在该竞赛')
             return render_template('put_cop.html', id=id, identity=identity)
         else:
+            if pattern == '个人':
+                min_p = 1
+                max_p = 1
+            else:
+                result = re.findall(r"\d+", string=pattern)
+                min_p = int(result[0])
+                max_p = int(result[1])
             if varify_time(sign_time, start_time, end_time):
                 com_info = Com_info(name=name, sign_time=sign_time, start_time=start_time, end_time=end_time,
                                     com_level=com_level, com_place=com_place, org_party=org_party,
-                                    teacher=teacher, put_time=put_time,
-                                    status=1, abstract=simplify, holder=hold)
+                                    teacher=teacher, put_time=put_time, award=award, assign=assign, min_p=min_p,
+                                    max_p=max_p, status=1, abstract=simplify, holder=hold, pattern=pattern)
                 db.session.add(com_info)
                 db.session.commit()
                 return redirect(url_for('home', id=id, identity=identity))
@@ -244,7 +278,7 @@ def put_cop(id, identity):
     return render_template('put_cop.html', id=id, identity=identity)
 
 
-def varify_time(sign_time, start_time, end_time):
+def varify_time(sign_time, start_time, end_time):  # 验证时间是否有效
     date = datetime.date.today()
     today = datetime.datetime.strptime(str(date), '%Y-%m-%d')
     sign_time = datetime.datetime.strptime(sign_time, '%Y-%m-%d')
@@ -305,8 +339,6 @@ def hello_world():
         identity = request.values.get("manufacturer")
         print(identity)
         id = request.values.get("id")
-        user_id = id
-        user = query_user(user_id)
         print(id)
         password = request.values.get("password")
         if identity == '学生':
@@ -318,10 +350,8 @@ def hello_world():
         else:
             lt = Monitor.query.filter_by(id=id, password=password).first()
         if lt:
-            curr_user = User()
-            curr_user.id = user_id
-
-            login_user(curr_user)
+            user = Admin.query.filter_by(id='zwk', password='123456')
+            # login_user(user)
             return redirect(url_for('home', identity=identity, id=id))
         else:
             message = "Login failed"

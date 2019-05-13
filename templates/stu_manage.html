@@ -93,7 +93,24 @@
       </div>
     </div>
   </div>
-  <form role="form" method="post" style="width:100%">
+  <div style="width:100%">
+  <div class="container" style="width:100%">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<h3 class="text-center">
+				{{ name }}评分
+			</h3>
+			<p class="text-center">
+				 <em>{{ name }}</em> 还剩余 {% for i in range(length) %}
+                {{ assign_list[i] }}个{{ award[i] }},
+                {% endfor %}
+			</p>
+		</div>
+	</div>
+</div>
+
+<div align ="center">
+  <form role="form" method="post" style="width:60%" class="text-center">
         <table style="width:100%">
             <thead>
             <tr>
@@ -109,16 +126,23 @@
                 <td>{{ student_list[index].dept }}</td>
                 <td>
                 <select class="form-control" name="grade" id="grade">
-                    {% for ll in award %}
-                        <option>{{ ll }}</option>
+                    {% for i in range(length) %}
+                        {% if assign_list[i] != 0 %}
+                        <option>{{ award[i] }}</option>
+                        {% endif %}
                     {% endfor %}
+                <option>无奖</option>
                 </select></td>
 {#                <td type="submit" class="btn btn-dark btn-block">提交</td>#}
                 </tr>
             </thead>
         </table>
-  <button type="submit" class="btn btn-dark btn-block">提交成绩并转到下一位</button>
+  <div align="right">
+  <button type="submit" class="btn btn-dark btn-block" style="width: 30%;">提交成绩并转到下一位</button>
+      </div>
 </form>
+</div>
+  </div>
 
   <!-- Bootstrap core JavaScript-->
   <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>
