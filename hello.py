@@ -38,6 +38,16 @@ t_stu_com = db.Table("table_stu_com",
                      db.Column("grade", db.String(20))
                      )
 
+t_team_stu = db.Table("table_team_stu",
+                      db.Column("stu_id", db.String(20), db.ForeignKey("students.id"), primary_key=True),
+                      db.Column("team_id", db.Integer, db.ForeignKey("teams.id"), primary_key=True),
+                      )
+t_com_team = db.Table(
+    "table_com_team",
+    db.Column("com_id", db.Integer, db.ForeignKey("Com_infos.id"), primary_key=True),
+    db.Column("team_id", db.Integer, db.ForeignKey("teams.id"), primary_key=True),
+)
+
 
 class Student(db.Model):  # 学生
     __tablename__ = 'students'
@@ -47,17 +57,15 @@ class Student(db.Model):  # 学生
     dept = db.Column(db.String(20))
     age = db.Column(db.Integer)
     com_infos = db.relationship("Com_info", backref="students", secondary="table_stu_com")
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
 
     def __repr__(self):
         return '<student: %r>' % (self.name)
 
 
-class Team(db.Model):  #队伍
+class Team(db.Model):  # 队伍
     __tablename__ = 'teams'
     id = db.Column(db.Integer, primary_key=True)
-    id_com = db.Column(db.Integer, db.ForeignKey('Com_infos.id'))
-    students = db.relationship('Student', backref='team')
+    students = db.relationship('Student', backref='teams', secondary="table_team_stu")
 
     def __repr__(self):
         return '<team: %r>' % (self.id)
@@ -83,7 +91,7 @@ class Com_info(db.Model):  # 竞赛信息
     pattern = db.Column(db.String(20))  # 参赛人数
     min_p = db.Column(db.Integer)
     max_p = db.Column(db.Integer)
-    teams = db.relationship('Team', backref='com_info')
+    teams = db.relationship('Team', backref='Com_infos', secondary="table_com_team")
 
     def __repr__(self):
         return '<Cominfo %r>' % (self.name)
@@ -209,14 +217,14 @@ teacher1 = Teacher(id='xiaotong',
                    name='肖桐',
                    academic='计算机学院',
                    email='1710085142@qq.com')
-team1 = Team(id_com=2)
+team1 = Team()
 team1.students.append(student2)
 team1.students.append(student4)
 team1.students.append(student5)
-team2 = Team(id_com=2)
+team2 = Team()
 team2.students.append(student3)
 team2.students.append(student6)
-team3 = Team(id_com=2)
+team3 = Team()
 team3.students.append(student7)
 team3.students.append(student8)
 team3.students.append(student9)
@@ -224,9 +232,9 @@ com_info2.teams.append(team1)
 com_info2.teams.append(team2)
 com_info2.teams.append(team3)
 
-team4 = Team(id_com=12)
-team5 = Team(id_com=12)
-team6 = Team(id_com=12)
+team4 = Team()
+team5 = Team()
+team6 = Team()
 team4.students.append(student2)
 team4.students.append(student4)
 team4.students.append(student5)
