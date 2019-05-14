@@ -9,13 +9,18 @@ import datetime
 import os
 import re
 import __init__
+from __init__ import *
 from hello import *
+import json
 import sys
 from os import path
 
 __init__
 hello  # 调用hello初始化模板
 app = Flask(__name__)
+
+app.config['JSON_AS_ASCII'] = False
+app.config['SECRET_KEY'] = '123456'
 # app.secret_key = ''
 bootstrap = Bootstrap(app)
 app.debug = True
@@ -105,6 +110,13 @@ def reset(id, identity):
     return render_template('reset.html', id=id, identity=identity)
 
 
+@app.route('/<identity>/<id>/<name>/<status>/com_team')
+def com_team(identity, id, name, status):
+    com_info = Com_info.query.filter_by(name=name).first()
+    teams = com_info.teams
+    return render_template('com_team.html', com_info=com_info, teams=teams, id=id, identity=identity, status=status)
+
+
 @app.route('/<identity>/<id>/<name>/<status>/com_stus')
 def com_stus(id, identity, name, status):
     com_new = Com_info.query.filter_by(name=name).first()
@@ -183,11 +195,10 @@ def detail(id, identity, name):
     com_detail = Com_info.query.filter_by(name=name).first()
     student1 = Student.query.filter_by(id=id).first()
     count = 0
-    print(com_detail.status)
     error = None
     if request.method == 'POST':
-        print('min:', com_detail.min_p)
-        print('max:', com_detail.max_p)
+        # print('min:', com_detail.min_p)
+        # print('max:', com_detail.max_p)
         for stu_comm in student1.com_infos:
             if stu_comm == com_detail:
                 count = count + 1
@@ -204,11 +215,22 @@ def detail(id, identity, name):
     return render_template('detail.html', id=id, identity=identity, com_detail=com_detail, error=error)
 
 
-@app.route('/<identity>/<id>/<name>/esteam',methods=['GET','POST'])
+@app.route('/<identity>/<id>/<name>/esteam', methods=['GET', 'POST'])
 def esteam(id, identity, name):
     student1 = Student.query.filter_by(id=id).first()
     if request.method == 'POST':
-        table = request.values.get("team")
+        global get_ajax_id
+        get_ajax_id = request.values.get('ajax_item_id', 0)
+        ctr = json.loads(get_ajax_id)
+        com = Com_info.query.filter_by(name=name).first()
+        team_new = Team(id_com=com.id)
+        for i in range(len(ctr)):
+            stu_name = ctr[i]['NAME']
+            stu = Student.query.filter_by(name=stu_name).first()
+            team_new.students.append(stu)
+            com.students.append(stu)
+        com.teams.append(team_new)
+        db.session.commit()
         return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
     return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
 
@@ -337,9 +359,7 @@ def hello_world():
     myForm = LoginForm(request.form)
     if request.method == 'POST':
         identity = request.values.get("manufacturer")
-        print(identity)
         id = request.values.get("id")
-        print(id)
         password = request.values.get("password")
         if identity == '学生':
             lt = Student.query.filter_by(id=id, password=password).first()
@@ -365,7 +385,7 @@ def home(id, identity):
     com_infos = Com_info.query.all()
     notice_list = Notice.query.all()
     g.com_list = com_infos
-    print(g.com_list)
+    # print(g.com_list)
     return render_template('main.html', id=id, identity=identity,
                            com_infos=com_infos, notice_list=notice_list)
 

@@ -13,3 +13,5 @@ for com_temp in com_list:
         com_temp.min_p = int(result[0])
         com_temp.max_p = int(result[1])
         db.session.commit()
+
+

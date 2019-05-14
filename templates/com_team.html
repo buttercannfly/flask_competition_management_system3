@@ -150,49 +150,28 @@
       </div>
     </div>
   </div>
-<div class="container" style="width:100%">
-	<div class="row clearfix">
-		<div class="col-md-12 column">
-			<h3 class="text-center text-success">
-				编辑队伍信息
-			</h3>
-            <form method="post" id="form">
-            <table id="team" border="1" style="width:100%" class="table table-hover">
-                <thead class="text-info">
-                    <tr>
-                        <th>姓名</th>
-                        <th>年龄</th>
-                        <th>院系</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ student.name }}</td>
-                        <td>{{ student.age }}</td>
-                        <td>{{ student.dept }}</td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" id="stu_name" class="input-group"></td>
-                        <td><input type="text" id="stu_age" class="input-group"></td>
-                        <td><input type="text" id="stu_dept" class="input-group"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <input class="btn btn-group-sm btn-danger " value="新增队员" onclick="insRow()" >
-                <input type="hidden" name="table_data" value="" id="hidTD">
-                <input id="btnSubmit" class="btn btn-primary" type="button" value="提交" onclick="myfunc()"/>
-                <a class="btn btn-primary" href="{{ url_for('detail',id=id,identity=identity,name=name) }}">返回</a>
-                </form>
-		</div>
-	</div>
-        <div>
-              {% for message in get_flashed_messages() %}
-                    <div class="alert alert-success" style="text-align: center">
-                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                        <strong>{{ message }}</strong></div>
+  <div style="width: 100%;">
+      <table class="table-hover table">
+          <thead>
+            <tr>
+                <th>团队编号</th>
+                {% for i in range(com_info.max_p) %}
+                    <th>人员</th>
                 {% endfor %}
-          </div>
-</div>
+            </tr>
+          </thead>
+      <tbody>
+      {% for ll in teams %}
+          <tr>
+                <td>{{ ll.id }}</td>
+                {% for stu in ll.students %}
+                    <td>{{ stu.name }}</td>
+                    {% endfor %}
+          </tr>
+      {% endfor %}
+      </tbody>
+      </table>
+  </div>
   <!-- Bootstrap core JavaScript-->
   <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -211,102 +190,7 @@
   <!-- Demo scripts for this page-->
   <script src="{{ url_for('static',filename='js/demo/datatables-demo.js') }}"></script>
   <script src="{{ url_for('static',filename='js/demo/chart-area-demo.js') }}"></script>
-<script type="text/javascript">
 
-function insRow()
-{
-    var x=document.getElementById('team').insertRow(1);
-    var y=x.insertCell(0);
-    var z=x.insertCell(1);
-    var t=x.insertCell(2);
-    alert("添加成功");
-    y.innerHTML=document.getElementById('stu_name').value;
-    z.innerHTML=document.getElementById('stu_age').value;
-    t.innerHTML=document.getElementById('stu_dept').value;
-    document.getElementById('stu_name').value = "";
-    document.getElementById('stu_age').value = "";
-    document.getElementById('stu_dept').value = ""
-  }
-
-</script>
-<script type="text/javascript" src="{{ url_for('static',filename='js/jquery-1.8.3.min.js') }}"></script>
-
-{#<script language="JavaScript">#}
-{#        function myfunc() {#}
-{#            var result = get_table_data();#}
-{#            $('#hidTD').val(JSON.stringify(result));#}
-{#            $('#form').submit();#}
-{#            alert(1)#}
-{#        }#}
-{#    function get_table_data() {#}
-{#        var tr = $("#team");#}
-{#        var result = [];#}
-{#        for(var i=0;i<tr.length;i++){#}
-{#            alert(tr.length);#}
-{#            var tds = $(tr[i]).find("td");#}
-{#            if(tds.length>0){#}
-{#                result.push({'Name':$(tds[0].html()),'Age':$(tds[1]).html(),'Dept':$(tds[2]).html()})#}
-{#            }#}
-{#        }#}
-{#    }#}
-{#</script>#}
-
-
-      <script type="text/javascript">
-        function myfunc() {
-        var tablen = document.getElementById("team");
-        var jsonT = "[";
-        for(var i = 1;i<tablen.rows.length-1;i++){
-            jsonT += '{"NAME":"'+tablen.rows[i].cells[0].innerHTML + '","AGE":"' +
-                    tablen.rows[i].cells[1].innerHTML + '","DEPT":"' + tablen.rows[i].cells[2].innerHTML+ '"},'
-        }
-        jsonT = jsonT.substr(0,jsonT.length-1);
-        jsonT += "]";
-        console.log(jsonT);
-        $.ajax({
-            type:'POST',
-            data:{ajax_item_id:jsonT},
-            success:function (data) {
-                alert('报名成功，已选中')
-            }
-        });
-    }
-</script>
-
-{#function createRow(){#}
-{#	var editTable=document.getElementById("tbody");#}
-{#	var tr=document.createElement("tr");#}
-{#	var td0=document.createElement("td");#}
-{#	var checkbox=document.createElement("input");#}
-{#	checkbox.type="checkbox";#}
-{#	checkbox.name="checkRow";#}
-{#	td0.appendChild(checkbox);#}
-{#	var td1=document.createElement("td");#}
-{#	td1.innerHTML="<input type='text' />";#}
-{#	var td2=document.createElement("td");#}
-{#	td2.innerHTML="a2";#}
-{#	var td3=document.createElement("td");#}
-{#	td3.innerHTML="a3";#}
-{#	tr.appendChild(td0);#}
-{#	tr.appendChild(td1);#}
-{#	tr.appendChild(td2);#}
-{#	tr.appendChild(td3);#}
-{#	editTable.appendChild(tr);#}
-{#}#}
-{#function delRow(){#}
-{#	var editTable=document.getElementById("tbody");#}
-{#	if(confirm("确认删除所选?")){#}
-{#		var checkboxs=document.getElementsByName("checkRow");#}
-{#		for(var i=0;i<checkboxs.length;i++){#}
-{#			if(checkboxs[i].checked){#}
-{#				var n=checkboxs[i].parentNode.parentNode;#}
-{#				editTable.removeChild(n);#}
-{#				i--;#}
-{#			}#}
-{#		}#}
-{##}
-{#	}#}
-{#}#}
 </body>
 
 </html>
