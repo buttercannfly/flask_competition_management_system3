@@ -46,6 +46,7 @@ t_com_team = db.Table(
     "table_com_team",
     db.Column("com_id", db.Integer, db.ForeignKey("Com_infos.id"), primary_key=True),
     db.Column("team_id", db.Integer, db.ForeignKey("teams.id"), primary_key=True),
+    db.Column("grade", db.String(20))
 )
 
 
@@ -164,18 +165,18 @@ com_info3 = Com_info(name='浙江省大学生证券投资竞赛', sign_time='201
                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12', pattern='个人',
                      teacher='肖桐 马冬梅',
                      end_time='2019-06-14', abstract='', holder='金融学院', award='一等奖 二等奖 三等奖', assign='1 1 1')
-com_info4 = Com_info(name='浙江省大学生管理案例竞赛', sign_time='2019-06-22', start_time='2019-06-24', pattern='1-4',
+com_info4 = Com_info(name='浙江省大学生管理案例竞赛', sign_time='2019-04-22', start_time='2019-03-24', pattern='1-4',
                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12', teacher='肖桐 马冬梅',
-                     end_time='2019-06-30', abstract='', holder='管理学院', award='一等奖 二等奖 三等奖')
+                     end_time='2019-06-30', abstract='', holder='管理学院', award='一等奖 二等奖 三等奖',assign='1 1 1')
 com_info5 = Com_info(name='浙江省大学生汉语口语竞赛', sign_time='2019-03-23', start_time='2019-03-29', pattern='个人',
                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12', teacher='肖桐 马冬梅',
                      end_time='2019-04-01', abstract='', holder='基础教学部', award='一等奖 二等奖 三等奖', assign='1 1 1')
 com_info6 = Com_info(name='浙江省体育产业创新创业大赛', sign_time='2019-03-23', start_time='2019-03-29', pattern='个人',
                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12', teacher='肖桐 马冬梅',
                      end_time='2019-04-01', abstract='', holder='团委', award='一等奖 二等奖 三等奖', assign='1 1 1')
-com_info7 = Com_info(name='浙江省大学生摄影大赛', sign_time='2019-03-23', start_time='2019-03-29', pattern='个人',
+com_info7 = Com_info(name='浙江省大学生摄影大赛', sign_time='2019-03-23', start_time='2019-04-29', pattern='个人',
                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12', teacher='肖桐 马冬梅',
-                     end_time='2019-04-01', abstract='', holder='艺术设计学院', award='一等奖 二等奖 三等奖', assign='1 1 1')
+                     end_time='2019-06-01', abstract='', holder='艺术设计学院', award='一等奖 二等奖 三等奖', assign='1 1 1')
 com_info8 = Com_info(name='浙江省大学生广告艺术设计大赛', sign_time='2019-04-25', start_time='2019-04-29', pattern='个人',
                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12', teacher='肖桐 马冬梅',
                      end_time='2019-05-01', abstract='', holder='艺术设计学院', award='一等奖 二等奖 三等奖', assign='1 1 1')
@@ -261,6 +262,8 @@ student7.com_infos.append(com_info2)
 student7.com_infos.append(com_info4)
 student8.com_infos.append(com_info2)
 student8.com_infos.append(com_info4)
+student9.com_infos.append(com_info2)
+student9.com_infos.append(com_info4)
 
 # student1.com_infos.append(com_info2)
 student1.com_infos.append(com_info1)

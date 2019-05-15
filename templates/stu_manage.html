@@ -38,7 +38,7 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
           <a class="dropdown-item" href={{ url_for('self_center',id=id,identity=identity) }}>个人中心</a>
-{#          <a class="dropdown-item" href="#">Activity Log</a>#}
+          <a class="dropdown-item" href="#">Activity Log</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href={{ url_for('hello_world') }} data-toggle="modal" data-target="#logoutModal">Logout</a>
         </div>
@@ -118,7 +118,7 @@
                 <th>年龄</th>
                 <th>学院</th>
                 <th>获奖</th>
-{#                <th></th>#}
+                <th></th>
             </tr>
                 <tr>
                 <td>{{ student_list[index].name }}</td>
@@ -133,7 +133,7 @@
                     {% endfor %}
                 <option>无奖</option>
                 </select></td>
-{#                <td type="submit" class="btn btn-dark btn-block">提交</td>#}
+                <td type="submit" class="btn btn-dark btn-block">提交</td>
                 </tr>
             </thead>
         </table>

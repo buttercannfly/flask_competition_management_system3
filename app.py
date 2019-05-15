@@ -113,8 +113,25 @@ def reset(id, identity):
 @app.route('/<identity>/<id>/<name>/<status>/com_team')
 def com_team(identity, id, name, status):
     com_info = Com_info.query.filter_by(name=name).first()
+    sql = " SELECT grade FROM table_com_team WHERE com_id = '%s'" % com_info.id
+    lst = db.session.execute(sql)
+    lst_done = []
     teams = com_info.teams
-    return render_template('com_team.html', com_info=com_info, teams=teams, id=id, identity=identity, status=status)
+    for ll in lst:
+        lst_done.append(ll[0])
+    teachers = com_info.teacher.split()
+    judge = 0
+    if identity == '老师':
+        teacher_temp = Teacher.query.filter_by(id=id).first()
+        if teacher_temp.name in teachers:
+            judge = 1
+            return render_template('com_team.html', com_info=com_info, teams=teams, id=id, identity=identity, name=name,
+                                   judge=judge, len=len(com_info.students), status=status, lst_done=lst_done)
+        else:
+            return render_template('com_team.html', com_info=com_info, teams=teams, id=id, identity=identity, name=name,
+                                   judge=judge, len=len(com_info.students), status=status, lst_done=lst_done)
+    return render_template('com_team.html', com_info=com_info, teams=teams, id=id, identity=identity, name=name,
+                           judge=judge, len=len(com_info.students), status=status, lst_done=lst_done)
 
 
 @app.route('/<identity>/<id>/<name>/<status>/com_stus')
@@ -127,11 +144,9 @@ def com_stus(id, identity, name, status):
         print(ll[0])
         lst_done.append(ll[0])
     teachers = com_new.teacher.split()
-    print(teachers)
     judge = 0
     if identity == '老师':
         teacher_temp = Teacher.query.filter_by(id=id).first()
-        print(teacher_temp.name)
         if teacher_temp.name in teachers:  # 判别是否是指导老师
             print('sc')
             judge = 1
@@ -184,6 +199,47 @@ def stu_manage(id, identity, name, index):
                            index=int(index), award=award_list, length=length, assign_list=assign_list)
 
 
+@app.route('/<identity>/<id>/<name>/<index>/team_manage', methods=['GET', 'POST'])
+def team_manage(id, identity, name, index):
+    com_temp = Com_info.query.filter_by(name=name).first()
+    com_infos = Com_info.query.all()
+    team_list = com_temp.teams
+    print(team_list)
+    award_list = com_temp.award.split()
+    assign_list = com_temp.assign.split()
+    assign_list = list(map(int, assign_list))  # 字符串数组转换成int数组
+    if request.method == 'POST':
+        grade1 = request.values.get("grade")
+        for i in range(len(award_list)):
+            if award_list[i] == grade1:
+                assign_list[i] = assign_list[i] - 1
+        ctr = str(assign_list[0])
+        for i in range(1, len(award_list)):
+            ctr = ctr + ' ' + str(assign_list[i])
+        com_temp.assign = ctr
+        db.session.commit()
+        sql = "UPDATE table_com_team SET grade = '%s' WHERE team_id = '%s' AND com_id = '%s'" % (
+            grade1, team_list[int(index)].id, com_temp.id)
+        db.session.execute(sql)
+        db.session.commit()
+        index = int(index) + 1
+        if index < len(team_list):
+            return redirect(url_for('team_manage', id=id, identity=identity, name=name, index=index))
+        else:
+            com_temp.status = 0
+            db.session.commit()
+            return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos)
+    length = len(award_list)
+    # print(team_list[int(index)].students)
+    # let =3
+    let = len(team_list[int(index)].students)
+    return render_template('team_manage.html', id=id, identity=identity, name=name,
+                           team_list=team_list, max_p=com_temp.max_p, let=let,
+                           index=int(index), award=award_list
+                           , length=length, assign_list=assign_list
+                           )
+
+
 @app.route('/<identity>/<id>/<name>/sc')
 def signup_sc(id, identity, name):
     com_detail = Com_info.query.filter_by(name=name).first()
@@ -223,12 +279,19 @@ def esteam(id, identity, name):
         get_ajax_id = request.values.get('ajax_item_id', 0)
         ctr = json.loads(get_ajax_id)
         com = Com_info.query.filter_by(name=name).first()
-        team_new = Team(id_com=com.id)
+        team_new = Team()
         for i in range(len(ctr)):
             stu_name = ctr[i]['NAME']
             stu = Student.query.filter_by(name=stu_name).first()
-            team_new.students.append(stu)
-            com.students.append(stu)
+            if stu in team_new.students:
+                flash(stu.name + '已报名')
+            else:
+                if stu in com.students:
+                    flash('已报名')
+                else:
+                    flash(stu.name + '报名成功')
+                    team_new.students.append(stu)
+                    com.students.append(stu)
         com.teams.append(team_new)
         db.session.commit()
         return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
