@@ -6,9 +6,12 @@ import pymysql
 from flask_login import LoginManager, current_user, login_user, login_required, UserMixin
 import datetime
 
+from sqlalchemy import create_engine
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123@localhost/flask_demo'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_POOL_SIZE'] = 100  # 解决session连接的问题
 db = SQLAlchemy(app)
 login_manager = LoginManager()  # 创建LoginManager实例.
 login_manager.session_protection = 'strong'
@@ -17,6 +20,10 @@ login_manager.login_message_category = 'info'
 login_manager.login_message = 'Access denied.'
 login_manager.init_app(app)
 app.secret_key = 'random string'
+# SQLALCHEMY_POOL_SIZE = 100
+# engine = create_engine('mysql+pymysql://root:123@localhost/flask_demo',
+#                            pool_recycle=10600, pool_size=100, max_overflow=20)
+create_engine.pool_size = 100
 
 
 class Monitor(db.Model):  # 管理员
@@ -566,6 +573,7 @@ def load_user(id):
 admin1 = Admin(id='zwk', password='123456')
 db.session.add(admin1)
 db.session.commit()
+db.session.close()
 # print(student1.com_infos)
 # print(student2.com_infos)
 # print(com_info1.students)

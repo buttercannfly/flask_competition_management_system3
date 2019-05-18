@@ -85,6 +85,7 @@ def self_center(id, identity):
         lt = Holder.query.filter_by(id=id).first()
     else:
         lt = Monitor.query.filter_by(id=id).first()
+    db.session.close()
     return render_template("self_center.html", id=id, identity=identity, lt=lt, grade_list=grade_list, length=length)
 
 
@@ -195,6 +196,7 @@ def stu_manage(id, identity, name, index):
             db.session.commit()
             return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos)
     length = len(award_list)
+    db.session.close()
     return render_template('stu_manage.html', id=id, identity=identity, name=name, student_list=student_list,
                            index=int(index), award=award_list, length=length, assign_list=assign_list)
 
@@ -233,6 +235,7 @@ def team_manage(id, identity, name, index):
     # print(team_list[int(index)].students)
     # let =3
     let = len(team_list[int(index)].students)
+    db.session.close()
     return render_template('team_manage.html', id=id, identity=identity, name=name,
                            team_list=team_list, max_p=com_temp.max_p, let=let,
                            index=int(index), award=award_list
@@ -268,6 +271,7 @@ def detail(id, identity, name):
                 return redirect(url_for('signup_sc', id=id, identity=identity, name=name))
             else:
                 return redirect(url_for('esteam', id=id, identity=identity, name=name))
+    db.session.close()
     return render_template('detail.html', id=id, identity=identity, com_detail=com_detail, error=error)
 
 
@@ -277,24 +281,32 @@ def esteam(id, identity, name):
     if request.method == 'POST':
         global get_ajax_id
         get_ajax_id = request.values.get('ajax_item_id', 0)
-        ctr = json.loads(get_ajax_id)
-        com = Com_info.query.filter_by(name=name).first()
-        team_new = Team()
-        for i in range(len(ctr)):
-            stu_name = ctr[i]['NAME']
-            stu = Student.query.filter_by(name=stu_name).first()
-            if stu in team_new.students:
-                flash(stu.name + '已报名')
-            else:
-                if stu in com.students:
-                    flash('已报名')
+        # print('get_ajax_id',get_ajax_id)
+        if get_ajax_id != 0:
+            ctr = json.loads(get_ajax_id)
+            # print('ctr', ctr)
+            com = Com_info.query.filter_by(name=name).first()
+            team_new = Team()
+            for i in range(len(ctr)):
+                stu_name = ctr[i]['NAME']
+                stu = Student.query.filter_by(name=stu_name).first()
+                if stu in team_new.students:
+                    flash(stu.name + '已存在')
+                    return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
                 else:
-                    flash(stu.name + '报名成功')
-                    team_new.students.append(stu)
-                    com.students.append(stu)
-        com.teams.append(team_new)
-        db.session.commit()
-        return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
+                    if stu in com.students:
+                        flash(stu.name+'已报名该竞赛')
+                        return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
+                    else:
+                        team_new.students.append(stu)
+                        com.students.append(stu)
+            com.teams.append(team_new)
+            db.session.commit()
+            return redirect(url_for('home', id=id, identity=identity))
+        else:
+            return redirect(url_for('home', id=id, identity=identity))
+        # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
+    db.session.close()
     return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
 
 
@@ -360,6 +372,7 @@ def put_cop(id, identity):
                 return redirect(url_for('home', id=id, identity=identity))
             else:
                 flash('时间安排不合理')
+    db.session.close()
     return render_template('put_cop.html', id=id, identity=identity)
 
 
@@ -409,6 +422,7 @@ def register():
         else:
             flash('请确保两次密码一致')
             return render_template('register.html')
+    db.session.close()
     return render_template('register.html')
 
 

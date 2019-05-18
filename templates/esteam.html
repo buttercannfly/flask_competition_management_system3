@@ -180,7 +180,8 @@
             </table>
             <input class="btn btn-group-sm btn-danger " value="新增队员" onclick="insRow()" >
                 <input type="hidden" name="table_data" value="" id="hidTD">
-                <input id="btnSubmit" class="btn btn-primary" type="button" value="提交" onclick="myfunc()"/>
+                <button id="btnSubmit" class="btn btn-primary" type="submit" value="提交" onclick="myfunc()">提交</button>
+{#                <input id="btnSubmit" class="btn btn-primary" type="button" value="提交" onclick="myfunc()"/>#}
                 <a class="btn btn-primary" href="{{ url_for('detail',id=id,identity=identity,name=name) }}">返回</a>
                 </form>
 		</div>
