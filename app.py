@@ -293,47 +293,43 @@ def esteam(id, identity, name):
             res = make_response(get_ajax_id)
             res.headers['Access-Control-Allow-Origin'] = '*'
             ctr = json.loads(get_ajax_id)
-                # print('ctr', ctr)
             com = Com_info.query.filter_by(name=name).first()
             team_new = Team()
             flag = 0
             for i in range(len(ctr)):
                 stu_name = ctr[i]['NAME']
-                # print(stu_name)
                 stu = Student.query.filter_by(name=stu_name).first()
                 if stu in team_new.students:
                     flash(stu.name + '已存在')
-                    g.status = 0
                     return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
                                            min=min_p, max=max_p)
                 else:
                     if stu in com.students:
-                        flash(stu.name + '已报名该竞赛')
-                        g.status = 0
-                        return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
-                                                min=min_p, max=max_p
-                                                )
+                        pass
+                        # flash('报名不成功,请重新组建队伍')
+                        # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
+                        #                        min=min_p, max=max_p
+                        #                        )
                     else:
                         flag = flag + 1
                         team_new.students.append(stu)
-                        com.students.append(stu)
+                        # com.students.append(stu)
             if flag != len(ctr):
-                g.status = 0
-                flash('报名不成功')
-                return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
-                                        min=min_p, max=max_p
-                                        )
+                print("no")
+                flash('报名不成功,请重新组建队伍')
+                return redirect(url_for('home', id=id, identity=identity))
             else:
                 flash('报名成功')
-                print('baomingabdahd')
-                g.status = 1
                 com.teams.append(team_new)
+                for stu in team_new.students:
+                    com.students.append(stu)
                 db.session.commit()
                 return redirect(url_for('home', id=id, identity=identity))
         else:
+            print('else')
             return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
-                                       min=min_p, max=max_p
-                                       )
+                                   min=min_p, max=max_p
+                                   )
     db.session.close()
     return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
                            min=min_p, max=max_p
