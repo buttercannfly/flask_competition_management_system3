@@ -1,9 +1,10 @@
 import random
 
-from flask import Flask, render_template, redirect, url_for, request, flash, g, current_app
+from flask import Flask, render_template, redirect, url_for, request, flash, g, current_app, make_response
 from flask_bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from wtforms import Form, TextField, PasswordField, validators
+from flask_cors import *
 import hello
 import datetime
 import os
@@ -18,6 +19,7 @@ from os import path
 __init__
 hello  # 调用hello初始化模板
 app = Flask(__name__)
+CORS(app, supports_credentials=True, resources=r'/*')
 
 app.config['JSON_AS_ASCII'] = False
 app.config['SECRET_KEY'] = '123456'
@@ -270,44 +272,72 @@ def detail(id, identity, name):
                 db.session.commit()
                 return redirect(url_for('signup_sc', id=id, identity=identity, name=name))
             else:
-                return redirect(url_for('esteam', id=id, identity=identity, name=name))
+                return redirect(
+                    url_for('esteam', id=id, identity=identity, name=name, min=com_detail.min_p, max=com_detail.max_p))
     db.session.close()
     return render_template('detail.html', id=id, identity=identity, com_detail=com_detail, error=error)
 
 
 @app.route('/<identity>/<id>/<name>/esteam', methods=['GET', 'POST'])
 def esteam(id, identity, name):
+    g.status = 0
     student1 = Student.query.filter_by(id=id).first()
+    com = Com_info.query.filter_by(name=name).first()
+    min_p = com.min_p
+    max_p = com.max_p
     if request.method == 'POST':
         global get_ajax_id
         get_ajax_id = request.values.get('ajax_item_id', 0)
-        # print('get_ajax_id',get_ajax_id)
+        print(get_ajax_id)
         if get_ajax_id != 0:
+            res = make_response(get_ajax_id)
+            res.headers['Access-Control-Allow-Origin'] = '*'
             ctr = json.loads(get_ajax_id)
-            # print('ctr', ctr)
+                # print('ctr', ctr)
             com = Com_info.query.filter_by(name=name).first()
             team_new = Team()
+            flag = 0
             for i in range(len(ctr)):
                 stu_name = ctr[i]['NAME']
+                # print(stu_name)
                 stu = Student.query.filter_by(name=stu_name).first()
                 if stu in team_new.students:
                     flash(stu.name + '已存在')
-                    return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
+                    g.status = 0
+                    return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
+                                           min=min_p, max=max_p)
                 else:
                     if stu in com.students:
-                        flash(stu.name+'已报名该竞赛')
-                        return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
+                        flash(stu.name + '已报名该竞赛')
+                        g.status = 0
+                        return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
+                                                min=min_p, max=max_p
+                                                )
                     else:
+                        flag = flag + 1
                         team_new.students.append(stu)
                         com.students.append(stu)
-            com.teams.append(team_new)
-            db.session.commit()
-            return redirect(url_for('home', id=id, identity=identity))
+            if flag != len(ctr):
+                g.status = 0
+                flash('报名不成功')
+                return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
+                                        min=min_p, max=max_p
+                                        )
+            else:
+                flash('报名成功')
+                print('baomingabdahd')
+                g.status = 1
+                com.teams.append(team_new)
+                db.session.commit()
+                return redirect(url_for('home', id=id, identity=identity))
         else:
-            return redirect(url_for('home', id=id, identity=identity))
-        # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
+            return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
+                                       min=min_p, max=max_p
+                                       )
     db.session.close()
-    return render_template('esteam.html', id=id, identity=identity, name=name, student=student1)
+    return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
+                           min=min_p, max=max_p
+                           )
 
 
 @app.route('/<identity>/<id>/<name>/notice_detail')

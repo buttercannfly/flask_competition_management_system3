@@ -156,7 +156,7 @@
 			<h3 class="text-center text-success">
 				编辑队伍信息
 			</h3>
-            <form method="post" id="form">
+{#            <form id="form" method="post">#}
             <table id="team" border="1" style="width:100%" class="table table-hover">
                 <thead class="text-info">
                     <tr>
@@ -179,11 +179,11 @@
                 </tbody>
             </table>
             <input class="btn btn-group-sm btn-danger " value="新增队员" onclick="insRow()" >
-                <input type="hidden" name="table_data" value="" id="hidTD">
-                <button id="btnSubmit" class="btn btn-primary" type="submit" value="提交" onclick="myfunc()">提交</button>
+{#                <input type="hidden" name="table_data" value="" id="hidTD">#}
+                <button id="btnSubmit" class="btn btn-primary" value="提交" type="submit" onclick="myfunc()">提交</button>
 {#                <input id="btnSubmit" class="btn btn-primary" type="button" value="提交" onclick="myfunc()"/>#}
                 <a class="btn btn-primary" href="{{ url_for('detail',id=id,identity=identity,name=name) }}">返回</a>
-                </form>
+{#                </form>#}
 		</div>
 	</div>
         <div>
@@ -216,6 +216,7 @@
 
 function insRow()
 {
+    var len = document.getElementById('team').rows.length;
     var x=document.getElementById('team').insertRow(1);
     var y=x.insertCell(0);
     var z=x.insertCell(1);
@@ -230,7 +231,8 @@ function insRow()
   }
 
 </script>
-<script type="text/javascript" src="{{ url_for('static',filename='js/jquery-1.8.3.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/redirect.js') }}"></script>
+{#<script type="text/javascript" src="{{ url_for('static',filename='js/jquery-1.8.3.min.js') }}"></script>#}
 
 {#<script language="JavaScript">#}
 {#        function myfunc() {#}
@@ -268,8 +270,13 @@ function insRow()
             type:'POST',
             data:{ajax_item_id:jsonT},
             success:function (data) {
-                alert('报名成功，已选中')
-            }
+                console.log('1');
+                alert('1');
+                window.location.reload()
+            },
+            error: function() {
+                    document.location.reload()
+                }
         });
     }
 </script>

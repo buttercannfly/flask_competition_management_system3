@@ -193,7 +193,9 @@
       {% endif %}
   <a class="btn btn-primary btn-block" style="width: 200px;" href={{ url_for("home",id=id,identity=identity) }}>返回</a>
       {% if error %}
-          {{ error }}
+          <div class="alert alert-success" style="text-align: center">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        <strong>{{ error }}</strong></div>
       {% endif %}
 </div>
   </form>
