@@ -1,3 +1,33 @@
+{##}
+{#{% block content %}#}
+{#    <form role="form" method="post">#}
+{#        <div class="form-group">#}
+{#            <label for="name">竞赛名称</label>#}
+{#            <input type="text" class="form-control" id="name" placeholder="请输入竞赛名称" name="name">#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#            <label for="sign_time">报名截止时间</label>#}
+{#            <input type="date" class="form-control" id="sign_time" placeholder="请输入报名截止时间" name="sign_time">#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#            <label for="begin_time">竞赛时间</label>#}
+{#            <input type="date" class="form-control" id="time" placeholder="请输入起始日期" name="time">#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#            <label for="end_time">竞赛结束时间</label>#}
+{#            <input type="date" class="form-control" id="end_time" placeholder="请输入结束日期" name="end_time">#}
+{#        </div>#}
+{#        <div class="form-group form-group-lg">#}
+{#            <label for="simplify">简介</label>#}
+{#            <input type="text" class="form-control" id="simplify" placeholder="请输入竞赛简介" name="simplify">#}
+{#        </div>#}
+{#        <div class="form-group form-group-lg">#}
+{#            <label for="file">附件</label>#}
+{#            <input type="file" class="form-control" id="file" name="file">#}
+{#        </div>#}
+{#        <button type="submit" class="btn btn-default">提交</button>#}
+{#    </form>#}
+{#{% endblock %}#}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,24 +56,12 @@
 
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-    <a class="navbar-brand mr-1" href="index.html">Flasky</a>
+    <a class="navbar-brand mr-1">Flasky</a>
 
     <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
       <i class="fas fa-bars"></i>
     </button>
     <ul class="navbar-nav  ml-auto mr-0 mr-md-3 my-2 my-md-0">
-{#      <li class="nav-item dropdown no-arrow mx-1">#}
-{#        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
-{#          <i class="fas fa-bell fa-fw"></i>#}
-{#          <span class="badge badge-danger">9+</span>#}
-{#        </a>#}
-{#        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alertsDropdown">#}
-{#          <a class="dropdown-item" href="#">Action</a>#}
-{#          <a class="dropdown-item" href="#">Another action</a>#}
-{#          <div class="dropdown-divider"></div>#}
-{#          <a class="dropdown-item" href="#">Something else here</a>#}
-{#        </div>#}
-{#      </li>#}
       <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-user-circle fa-fw"></i>
@@ -69,13 +87,13 @@
           <span>首页</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item text-primary">
         <a class="nav-link" href={{ url_for('com_list',id=id,identity=identity) }}>
           <i class="fas fa-fw fa-chart-area"></i>
           <span>赛事信息</span></a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" >
+      <li class="nav-item text-primary">
+        <a class="nav-link">
           <i class="fas fa-fw fa-table"></i>
           <span>获奖查询</span></a>
       </li>
@@ -105,49 +123,43 @@
       </div>
     </div>
   </div>
-      <div class="text-info">
-          {% if identity != '管理员' %}
-          {{ lt.name }}<br>
-          {% endif %}
-          {% if identity == '学生' %}
-              所属院系：{{ lt.dept }}<br>
-            年龄：{{ lt.age }}
-              <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>报名项目</th>
-                            <th>获奖情况</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for i in range(length) %}
-                            <tr>
-                                <td>{{ lt.com_infos[i].name }}</td>
-                                {% if grade_list[i] %}
-                                <td>{{ grade_list[i] }}</td>
-                                    {% else %}
-                            <td class="text-danger">暂未结束</td>
-                            {% endif %}
+  <div style="width: 100%">
+      <div><form method="post" style="width: 100%">
+  <h5>添加主办方信息</h5><br>
+              <input type="text" id="name" placeholder="请输入名字" name="name" class="form-control"> <br>
+              <input type="text" id="id" placeholder="请输入id" name="id" class="form-control"> <br>
+              <input type="text" id="password" placeholder="请输入password" name="password" class="form-control"><br>
+  <button class="btn btn-dark">提交</button>
+          <hr></form></div>
+  <div style="width: 100%">
+      <table class="table table-hover" style="width: 100%">
+          <thead>
+            <tr>
+                <th>主办方</th>
+                <th>用户名</th>
+                <th>密码</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for ll in  list %}
+              <tr>
+                <td>{{ ll.name }}</td>
+                <td>{{ ll.id }}</td>
+                <td>{{ ll.password }}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+  </div></div>
+      <div style="width: 100%">
+          <div>
+              {% for message in get_flashed_messages() %}
+                    <div class="alert alert-success" style="text-align: center">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        <strong>{{ message }}</strong></div>
+                {% endfor %}
+          </div>
 
-                            </tr>
-                    {% endfor %}
-                    </tbody>
-              </table>
-{#              <a href="" class="btn btn-primary btn-block">查看所获奖状</a><br>#}
-      {% endif %}
-            {% if identity == '赛事主办方' %}
-                <a class="btn btn-primary btn-block" href={{ url_for('put_cop',id=id,identity=identity) }} >发布竞赛信息</a>
-      {% endif %}
-            {% if identity == '老师' %}
-                学院：{{ lt.academic }}<br>
-                email:{{ lt.email }}<br>
-      {% endif %}
-      {% if identity == '管理员' %}
-          <a class="btn btn-primary btn-block" href={{ url_for('raise_answer',id=id,identity=identity) }}>发布通知公告</a><br>
-          <a class="btn btn-dark btn-block" href={{ url_for('teacher_manage',id=id,identity=identity) }}>管理老师信息</a><br>
-          <a class="btn btn-dark btn-block" href="{{ url_for('holder_manage',id=id,identity=identity) }}">管理主办方信息</a>
-      {% endif %}
-      </div>
 
   <!-- Bootstrap core JavaScript-->
   <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>

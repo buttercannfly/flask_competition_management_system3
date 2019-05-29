@@ -1,6 +1,6 @@
 import random
 
-from flask import Flask
+from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
 from flask_login import LoginManager, current_user, login_user, login_required, UserMixin
@@ -143,8 +143,26 @@ class Teacher(db.Model):  # 老师
         return '<Teacher:%s>' % (self.name)
 
 
+class Admin(UserMixin, db.Model):
+    __tablename__ = 'admin'
+    admin_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+    password = db.Column(db.String(24))
+
+    def __init__(self, password, name):
+        self.password = password
+        self.name = name
+
+    def get_id(self):
+        return self.admin_id
+
+    def __repr__(self):
+        return '<Admin %r>' % self.admin_id
+
+
 db.drop_all()
 db.create_all()
+# admin1 = Admin(name='nut', password='123456')
 monitor = Monitor(id='butter', password='123456')
 holder = Holder(id='ztgt', password='123456', name='中天钢铁')
 student1 = Student(id='zwk', password='123456', name='张伟康', dept='计算机学院', age=22)
@@ -174,7 +192,7 @@ com_info3 = Com_info(name='浙江省大学生证券投资竞赛', sign_time='201
                      end_time='2019-06-14', abstract='', holder='金融学院', award='一等奖 二等奖 三等奖', assign='1 1 1')
 com_info4 = Com_info(name='浙江省大学生管理案例竞赛', sign_time='2019-04-22', start_time='2019-03-24', pattern='1-4',
                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12', teacher='肖桐 马冬梅',
-                     end_time='2019-06-30', abstract='', holder='管理学院', award='一等奖 二等奖 三等奖',assign='1 1 1')
+                     end_time='2019-06-30', abstract='', holder='管理学院', award='一等奖 二等奖 三等奖', assign='1 1 1')
 com_info5 = Com_info(name='浙江省大学生汉语口语竞赛', sign_time='2019-03-23', start_time='2019-03-29', pattern='个人',
                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12', teacher='肖桐 马冬梅',
                      end_time='2019-04-01', abstract='', holder='基础教学部', award='一等奖 二等奖 三等奖', assign='1 1 1')
@@ -485,7 +503,7 @@ notice4 = Notice(name='2018-2019学年第二学期藕舫学院地面气象观测
                          '打印交至中国气象局综合观测培训实习基地（南京）（南京信息工程大学大探基地）'
                          '104室。联系人：吴老师；电话：18795803392。')
 # notice5 = Notice(name=)
-
+# db.session.add(admin1)
 db.session.add(notice1)
 db.session.add(notice2)
 db.session.add(notice3)
@@ -545,33 +563,6 @@ for com_info in com_infos:
         db.session.commit()
     db.session.commit()
 
-
-class Admin(db.Model, UserMixin):
-    __tablename = 'admin'
-    id = db.Column(db.String(20), primary_key=True)
-    password = db.Column(db.String(20))
-
-    def is_active(self):  # line 37
-        return True
-
-    def __init__(self, id, password):
-        self.id = id
-        self.password = password
-
-    def get_id(self):
-        return self.id
-
-    def __repr__(self):
-        return '<Admin %r>' % self.id
-
-
-@login_manager.user_loader
-def load_user(id):
-    return Admin.query.get(int(id))
-
-
-admin1 = Admin(id='zwk', password='123456')
-db.session.add(admin1)
 db.session.commit()
 db.session.close()
 # print(student1.com_infos)
