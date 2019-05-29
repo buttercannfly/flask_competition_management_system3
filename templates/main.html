@@ -115,7 +115,7 @@
 {#        </div>#}
 {#      </li>#}
       <li class="nav-item">
-        <a class="nav-link" href={{ url_for('com_list',id=id,identity=identity) }}>
+        <a class="nav-link" href={{ url_for('com_list',id=id,identity=identity,flag=0) }}>
           <i class="fas fa-fw fa-chart-area"></i>
           <span>赛事信息</span></a>
       </li>
@@ -158,7 +158,7 @@
           <th>主办方</th>
           <th>状态</th>
           <th>详细信息</th>
-          <th><a href={{ url_for('com_list',id=id,identity=identity) }}>更多...</a></th>
+          <th><a href={{ url_for('com_list',id=id,identity=identity,flag=0) }}>更多...</a></th>
       </tr>
       </thead>
       <tbody>

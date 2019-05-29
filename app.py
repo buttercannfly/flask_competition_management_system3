@@ -572,11 +572,12 @@ def home(id, identity):
                            com_infos=com_infos, notice_list=notice_list)
 
 
-@app.route('/<identity>/<id>/com_list')
-def com_list(id, identity):
+@app.route('/<identity>/<id>/<flag>/com_list')
+def com_list(id, identity, flag):
     com_infos = Com_info.query.all()
-    return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos
-                           # , paginate=paginate
+    length = len(com_infos)
+    page = length/5
+    return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos, page=int(page),flag=int(flag)
                            )
 
 
