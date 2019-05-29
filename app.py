@@ -1,10 +1,11 @@
 import random
 
-from flask import Flask, render_template, redirect, url_for, request, flash, g, current_app, make_response
+from flask import Flask, render_template, redirect, url_for, request, flash, g, current_app, make_response, session
 from flask_bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from wtforms import Form, TextField, PasswordField, validators
 from flask_cors import *
+from flask_login import UserMixin,LoginManager,login_required,login_user
 import hello
 import datetime
 import os
@@ -28,13 +29,20 @@ bootstrap = Bootstrap(app)
 app.debug = True
 
 
-# login_manager = LoginManager()  # 创建LoginManager实例.
-# login_manager.session_protection = 'strong'
-# login_manager.login_view = 'login'
-# login_manager.login_message_category = 'info'
-# login_manager.login_message = 'Access denied.'
-# login_manager.init_app(app)
-# app.secret_key = 'random string'
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'hello_world'
+login_manager.login_message = '请先登录'
+
+
+@login_manager.user_loader
+def load_user(admin_id):
+    lt = Admin.query.filter_by(admin_id=admin_id).first()
+    if lt:
+        return lt
+    else:
+        return None
 
 
 def check_name(str):
@@ -62,12 +70,84 @@ class InfoForm(Form):
     simplify = TextField("simplify", [validators.Required()])
 
 
-@app.route('/<identity>/<id>/raise_answer')
+@app.route('/<identity>/<id>/teacher_manage',methods=['GET', 'POST'])
+def teacher_manage(id,identity):
+    tea_list = Teacher.query.all()
+    print(tea_list)
+    if request.method == 'POST':
+        id = request.values.get("id")
+        name = request.values.get("name")
+        password = request.values.get("password")
+        academic = request.values.get("academic")
+        email = request.values.get("email")
+        print(id, name, email, academic, password)
+        lt = Teacher.query.filter_by(id=id).first()
+        if lt:
+            flash('所添加老师已存在')
+            return render_template("teacher_manage.html", id=id, identity=identity, list=tea_list)
+        else:
+            teacher = Teacher(id=id, name=name, password=password, academic=academic, email=email)
+            db.session.add(teacher)
+            db.session.commit()
+            tea_list = Teacher.query.all()
+            return render_template("teacher_manage.html", id=id, identity=identity, list=tea_list)
+    return render_template("teacher_manage.html", id=id, identity=identity, list=tea_list)
+
+
+@app.route('/<identity>/<id>/holder_manage', methods=['GET', 'POST'])
+def holder_manage(id,identity):
+    hold_list = Holder.query.all()
+    print(hold_list)
+    if request.method == 'POST':
+        id = request.values.get("id")
+        name = request.values.get("name")
+        password = request.values.get("password")
+        print(id, name, password)
+        lt = Holder.query.filter_by(id=id).first()
+        if lt:
+            flash('所添加老师已存在')
+            return render_template('holder_manage.html', id=id, identity=identity, list=hold_list)
+        else:
+            holder = Holder(id=id, name=name, password=password)
+            db.session.add(holder)
+            db.session.commit()
+            hold_list = Holder.query.all()
+            return render_template('holder_manage.html', id=id, identity=identity, list=hold_list)
+    return render_template('holder_manage.html', id=id, identity=identity, list=hold_list)
+
+
+@app.route('/<identity>/<id>/raise_answer', methods=['GET', 'POST'])
 def raise_answer(id, identity):
+    if request.method == 'POST':
+        name = request.values.get("name")
+        author = request.values.get("author")
+        source = request.values.get("source")
+        dept = request.values.get("dept")
+        content = request.values.get("content")
+        put_time = datetime.date.today()
+        f = request.files['file']
+        fname = secure_filename(f.filename)
+        if fname:
+            ext = fname.rsplit('.', 1)[1]
+            new_filename = str(name) + '.' + ext
+            basepath = os.path.dirname(__file__)
+            upload_path = os.path.join(basepath, 'static\\notices', new_filename)
+            f.save(upload_path)
+        lt = Notice.query.filter_by(name=name).first()
+        if lt:
+            print('competition exists')
+            flash('已存在该通知')
+            return render_template('raise_answer.html', id=id, identity=identity)
+        else:
+            notice = Notice(name=name, source=source, dept=dept, author=author, content=content, put_time=put_time)
+            db.session.add(notice)
+            db.session.commit()
+            return redirect(url_for('home', id=id, identity=identity))
+    db.session.close()
     return render_template('raise_answer.html', id=id, identity=identity)
 
 
-@app.route('/<identity>/<id>/self_center')
+@app.route('/<identity>/<id>/self_center', methods=['GET', 'POST'])
 def self_center(id, identity):
     length = 0
     grade_list = 0
@@ -306,10 +386,6 @@ def esteam(id, identity, name):
                 else:
                     if stu in com.students:
                         pass
-                        # flash('报名不成功,请重新组建队伍')
-                        # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
-                        #                        min=min_p, max=max_p
-                        #                        )
                     else:
                         flag = flag + 1
                         team_new.students.append(stu)
@@ -473,8 +549,12 @@ def hello_world():
         else:
             lt = Monitor.query.filter_by(id=id, password=password).first()
         if lt:
-            user = Admin.query.filter_by(id='zwk', password='123456')
+            # user = Admin.query.filter_by(id='zwk', password='123456')
             # login_user(user)
+            user = Admin(name='nut',password='123456')
+            db.session.add(user)
+            db.session.commit()
+            login_user(user, True)
             return redirect(url_for('home', identity=identity, id=id))
         else:
             message = "Login failed"
@@ -483,12 +563,11 @@ def hello_world():
 
 
 @app.route('/home/<identity>/<id>', methods=['GET', 'POST'])  # 主页
-# @login_required
+@login_required
 def home(id, identity):
     com_infos = Com_info.query.all()
     notice_list = Notice.query.all()
     g.com_list = com_infos
-    # print(g.com_list)
     return render_template('main.html', id=id, identity=identity,
                            com_infos=com_infos, notice_list=notice_list)
 
