@@ -33,7 +33,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'hello_world'
-login_manager.login_message = '请先登录'
+login_manager.login_message = ''
 
 
 @login_manager.user_loader
@@ -91,6 +91,7 @@ def teacher_manage(id,identity):
             db.session.commit()
             tea_list = Teacher.query.all()
             return render_template("teacher_manage.html", id=id, identity=identity, list=tea_list)
+    db.session.close()
     return render_template("teacher_manage.html", id=id, identity=identity, list=tea_list)
 
 
@@ -113,6 +114,7 @@ def holder_manage(id,identity):
             db.session.commit()
             hold_list = Holder.query.all()
             return render_template('holder_manage.html', id=id, identity=identity, list=hold_list)
+    db.session.close()
     return render_template('holder_manage.html', id=id, identity=identity, list=hold_list)
 
 
@@ -190,6 +192,7 @@ def reset(id, identity):
         else:
             flash('两次密码不一致')
             return render_template('reset.html', id=id, identity=identity)
+    db.session.close()
     return render_template('reset.html', id=id, identity=identity)
 
 
@@ -213,6 +216,7 @@ def com_team(identity, id, name, status):
         else:
             return render_template('com_team.html', com_info=com_info, teams=teams, id=id, identity=identity, name=name,
                                    judge=judge, len=len(com_info.students), status=status, lst_done=lst_done)
+    # db.session.close()
     return render_template('com_team.html', com_info=com_info, teams=teams, id=id, identity=identity, name=name,
                            judge=judge, len=len(com_info.students), status=status, lst_done=lst_done)
 
@@ -251,6 +255,15 @@ def stu_manage(id, identity, name, index):
     award_list = com_temp.award.split()
     assign_list = com_temp.assign.split()
     assign_list = list(map(int, assign_list))  # 字符串数组转换成int数组
+    sql = " SELECT stu_id,grade FROM table_stu_com WHERE com_id = '%s'" % com_temp.id
+    lst = db.session.execute(sql)
+    stu_ach = []
+    grade_ach = []
+    for ll in lst:
+        print(ll[0],ll[1])
+        stu_ach.append(ll[0])
+        grade_ach.append(ll[1])
+
     if request.method == 'POST':
         print(award_list)
         print(assign_list)
@@ -276,10 +289,12 @@ def stu_manage(id, identity, name, index):
         else:
             com_temp.status = 0
             db.session.commit()
-            return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos)
+            return redirect(url_for('home', id=id, identity=identity))
     length = len(award_list)
+    size = len(stu_ach)
     db.session.close()
     return render_template('stu_manage.html', id=id, identity=identity, name=name, student_list=student_list,
+                           stu_ach=stu_ach, grade_ach=grade_ach,size=size,
                            index=int(index), award=award_list, length=length, assign_list=assign_list)
 
 
@@ -415,6 +430,7 @@ def esteam(id, identity, name):
 @app.route('/<identity>/<id>/<name>/notice_detail')
 def notice_detail(id, identity, name):
     notice_temp = Notice.query.filter_by(name=name).first()
+    db.session.close()
     return render_template('notice_detail.html', id=id, identity=identity, notice=notice_temp)
 
 
@@ -568,6 +584,7 @@ def home(id, identity):
     com_infos = Com_info.query.all()
     notice_list = Notice.query.all()
     g.com_list = com_infos
+    db.session.close()
     return render_template('main.html', id=id, identity=identity,
                            com_infos=com_infos, notice_list=notice_list)
 
@@ -577,6 +594,7 @@ def com_list(id, identity, flag):
     com_infos = Com_info.query.all()
     length = len(com_infos)
     page = length/5
+    db.session.close()
     return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos, page=int(page),flag=int(flag)
                            )
 
@@ -584,6 +602,7 @@ def com_list(id, identity, flag):
 @app.route('/<identity>/<id>/notice_list')
 def notice_list(id, identity):
     notice_lists = Notice.query.all()
+    db.session.close()
     return render_template('notice_list.html', id=id, identity=identity, notice_lists=notice_lists)
 
 

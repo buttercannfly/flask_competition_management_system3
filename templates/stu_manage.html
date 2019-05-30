@@ -142,6 +142,25 @@
       </div>
 </form>
 </div>
+  <div align="center">
+      <h5>目前得奖信息为</h5>
+      <table class="table-hover table">
+          <thead>
+            <tr>
+                <th>学生id</th>
+                <th>成绩</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in range(size) %}
+                <tr>
+                    <td>{{ stu_ach[i] }}</td>
+                    <td>{{ grade_ach[i] }}</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+  </div>
   </div>
 
   <!-- Bootstrap core JavaScript-->
