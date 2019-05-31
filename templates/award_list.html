@@ -1,3 +1,4 @@
+{% import "_macros.html" as macros %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,19 +27,31 @@
 
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-    <a class="navbar-brand mr-1">Flasky</a>
+    <a class="navbar-brand mr-1" href="index.html">Flasky</a>
 
-    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
+    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle">
       <i class="fas fa-bars"></i>
     </button>
     <ul class="navbar-nav  ml-auto mr-0 mr-md-3 my-2 my-md-0">
+{#      <li class="nav-item dropdown no-arrow mx-1">#}
+{#        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#          <i class="fas fa-bell fa-fw"></i>#}
+{#          <span class="badge badge-danger">9+</span>#}
+{#        </a>#}
+{#        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alertsDropdown">#}
+{#          <a class="dropdown-item" href="#">Action</a>#}
+{#          <a class="dropdown-item" href="#">Another action</a>#}
+{#          <div class="dropdown-divider"></div>#}
+{#          <a class="dropdown-item" href="#">Something else here</a>#}
+{#        </div>#}
+{#      </li>#}
       <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-user-circle fa-fw"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
           <a class="dropdown-item" href={{ url_for('self_center',id=id,identity=identity) }}>个人中心</a>
-          <a class="dropdown-item" href="#">Activity Log</a>
+{#          <a class="dropdown-item" href="#">Activity Log</a>#}
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href={{ url_for('hello_world') }} data-toggle="modal" data-target="#logoutModal">Logout</a>
         </div>
@@ -57,7 +70,23 @@
           <span>首页</span>
         </a>
       </li>
-      <li class="nav-item">
+{#      <li class="nav-item dropdown">#}
+{#        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#          <i class="fas fa-fw fa-folder"></i>#}
+{#          <span>Pages</span>#}
+{#        </a>#}
+{#        <div class="dropdown-menu" aria-labelledby="pagesDropdown">#}
+{#          <h6 class="dropdown-header">Login Screens:</h6>#}
+{#          <a class="dropdown-item" href="login.html">Login</a>#}
+{#          <a class="dropdown-item" href="register.html">Register</a>#}
+{#          <a class="dropdown-item" href="forgot-password.html">Forgot Password</a>#}
+{#          <div class="dropdown-divider"></div>#}
+{#          <h6 class="dropdown-header">Other Pages:</h6>#}
+{#          <a class="dropdown-item" href="404.html">404 Page</a>#}
+{#          <a class="dropdown-item" href="blank.html">Blank Page</a>#}
+{#        </div>#}
+{#      </li>#}
+      <li class="nav-item active">
         <a class="nav-link" href={{ url_for('com_list',id=id,identity=identity,flag=0) }}>
           <i class="fas fa-fw fa-chart-area"></i>
           <span>赛事信息</span></a>
@@ -93,77 +122,30 @@
       </div>
     </div>
   </div>
-  <div style="width:100%">
-  <div class="container" style="width:100%">
-	<div class="row clearfix">
-		<div class="col-md-12 column">
-			<h3 class="text-center">
-				{{ name }}评分
-			</h3>
-			<p class="text-center">
-				 <em>{{ name }}</em> 还剩余 {% for i in range(length) %}
-                {{ assign_list[i] }}个{{ award[i] }},
-                {% endfor %}
-			</p>
-		</div>
-	</div>
-</div>
-
-<div align ="center">
-  <form role="form" method="post" style="width:60%" class="text-center">
-        <table style="width:100%">
+<div style="width: 100%">
+    <div style="width: 100%">
+        <table class="table table-hover" style="width: 100%">
             <thead>
-            <tr>
-                <th>学生姓名</th>
-                <th>年龄</th>
-                <th>学院</th>
-                <th>获奖</th>
-                <th></th>
-            </tr>
                 <tr>
-                <td>{{ student_list[index].name }}</td>
-                <td>{{ student_list[index].age }}</td>
-                <td>{{ student_list[index].dept }}</td>
-                <td>
-                <select class="form-control" name="grade" id="grade">
-                    {% for i in range(length) %}
-                        {% if assign_list[i] != 0 %}
-                        <option>{{ award[i] }}</option>
-                        {% endif %}
-                    {% endfor %}
-                <option>无奖</option>
-                </select></td>
-{#                <td type="submit" class="btn btn-dark btn-block">提交</td>#}
+                    <th>学生姓名</th>
+                    <th>参与竞赛</th>
+                    <th>成绩</th>
                 </tr>
             </thead>
-        </table>
-  <div align="right">
-  <button type="submit" class="btn btn-dark btn-block" style="width: 30%;">提交成绩并转到下一位</button>
-      </div>
-</form>
-</div>
-  <div align="center">
-      <h5>目前得奖信息为</h5>
-      <table class="table-hover table">
-          <thead>
-            <tr>
-                <th>学生id</th>
-                <th>成绩</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for i in range(size) %}
-                {% if grade_ach[i] != None %}
-                <tr>
-                    <td>{{ stu_ach[i] }}</td>
-                    <td>{{ grade_ach[i] }}</td>
-                </tr>
-                {% endif %}
+            <tbody>
+                {% for i in range(size) %}
+                    {% if grade_stu[i] %}
+                    <tr>
+                        <td>{{ stu_list[i] }}</td>
+                        <td>{{ com_stu_list[i] }}</td>
+                        <td>{{ grade_stu[i] }}</td>
+                    </tr>
+                    {% endif %}
             {% endfor %}
-          </tbody>
-      </table>
-  </div>
-  </div>
+            </tbody>
+        </table>
+    </div>
+</div>
 
   <!-- Bootstrap core JavaScript-->
   <script src="{{ url_for('static',filename='vendor/jquery/jquery.min.js') }}"></script>

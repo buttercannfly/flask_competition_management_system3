@@ -5,7 +5,7 @@ from flask_bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from wtforms import Form, TextField, PasswordField, validators
 from flask_cors import *
-from flask_login import UserMixin,LoginManager,login_required,login_user
+from flask_login import UserMixin, LoginManager, login_required, login_user
 import hello
 import datetime
 import os
@@ -27,7 +27,6 @@ app.config['SECRET_KEY'] = '123456'
 # app.secret_key = ''
 bootstrap = Bootstrap(app)
 app.debug = True
-
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -70,8 +69,39 @@ class InfoForm(Form):
     simplify = TextField("simplify", [validators.Required()])
 
 
-@app.route('/<identity>/<id>/teacher_manage',methods=['GET', 'POST'])
-def teacher_manage(id,identity):
+@app.route('/<identity>/<id>/award_list')
+def award_list(id, identity):
+    sql = " SELECT * FROM table_stu_com"
+    charge = db.session.execute(sql)
+    stu_list = []
+    com_stu_list = []
+    grade_stu = []
+    for ll in charge:
+        stu = Student.query.filter_by(id=ll[0]).first()
+        com = Com_info.query.filter_by(id=ll[1]).first()
+        stu_list.append(stu.name)
+        com_stu_list.append(com.name)
+        grade_stu.append(ll[2])
+    sql1 = "SELECT * FROM table_com_team"
+    charge1 = db.session.execute(sql1)
+    team_list = []
+    com_team_list = []
+    grade_team = []
+    for ll in charge1:
+        team = Team.query.filter_by(id=ll[1]).first()
+        com = Com_info.query.filter_by(id=ll[0]).first()
+        team_list.append(team)
+        com_team_list.append(com.name)
+        grade_team.append(ll[2])
+    size = len(stu_list)
+    size1 = len(team_list)
+    return render_template('award_list.html', id=id, identity=identity, stu_list=stu_list, com_stu_list=com_stu_list,
+                           grade_stu=grade_stu, team_list=team_list, com_team_list=com_team_list, grade_team=grade_team,
+                           size=size,size1=size1)
+
+
+@app.route('/<identity>/<id>/teacher_manage', methods=['GET', 'POST'])
+def teacher_manage(id, identity):
     tea_list = Teacher.query.all()
     print(tea_list)
     if request.method == 'POST':
@@ -96,7 +126,7 @@ def teacher_manage(id,identity):
 
 
 @app.route('/<identity>/<id>/holder_manage', methods=['GET', 'POST'])
-def holder_manage(id,identity):
+def holder_manage(id, identity):
     hold_list = Holder.query.all()
     print(hold_list)
     if request.method == 'POST':
@@ -260,8 +290,9 @@ def stu_manage(id, identity, name, index):
     stu_ach = []
     grade_ach = []
     for ll in lst:
-        print(ll[0],ll[1])
-        stu_ach.append(ll[0])
+        print(ll[0], ll[1])
+        stu_charge = Student.query.filter_by(id=ll[0]).first()
+        stu_ach.append(stu_charge.name)
         grade_ach.append(ll[1])
 
     if request.method == 'POST':
@@ -294,7 +325,7 @@ def stu_manage(id, identity, name, index):
     size = len(stu_ach)
     db.session.close()
     return render_template('stu_manage.html', id=id, identity=identity, name=name, student_list=student_list,
-                           stu_ach=stu_ach, grade_ach=grade_ach,size=size,
+                           stu_ach=stu_ach, grade_ach=grade_ach, size=size,
                            index=int(index), award=award_list, length=length, assign_list=assign_list)
 
 
@@ -567,7 +598,7 @@ def hello_world():
         if lt:
             # user = Admin.query.filter_by(id='zwk', password='123456')
             # login_user(user)
-            user = Admin(name='nut',password='123456')
+            user = Admin(name='nut', password='123456')
             db.session.add(user)
             db.session.commit()
             login_user(user, True)
@@ -593,9 +624,10 @@ def home(id, identity):
 def com_list(id, identity, flag):
     com_infos = Com_info.query.all()
     length = len(com_infos)
-    page = length/5
+    page = length / 5
     db.session.close()
-    return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos, page=int(page),flag=int(flag)
+    return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos, page=int(page),
+                           flag=int(flag)
                            )
 
 
