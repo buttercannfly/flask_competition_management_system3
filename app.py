@@ -104,7 +104,7 @@ def edit_holder(id, identity, flag):
         db.session.commit()
         flash('修改成功')
         return redirect(url_for('holder_manage', id=id, identity=identity))
-    return render_template('edit_holder.html', id=id, identity=identity,form=form)
+    return render_template('edit_holder.html', id=id, identity=identity, form=form)
 
 
 @app.route('/<identity>/<id>/<flag>/remove_holder', methods=['GET', 'POST'])
@@ -497,28 +497,38 @@ def esteam(id, identity, name):
             for i in range(len(ctr)):
                 stu_name = ctr[i]['NAME']
                 stu = Student.query.filter_by(name=stu_name).first()
-                if stu in team_new.students:
-                    flash(stu.name + '已存在')
-                    return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
-                                           min=min_p, max=max_p)
+                if stu is None:
+                    flash('系统不存在'+stu_name+'学生')
+                    print('bucunzai')
+                    # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
+                    #                        min=min_p, max=max_p)
                 else:
-                    if stu in com.students:
-                        pass
+                    if stu in team_new.students:
+                        flash(stu.name + '已存在')
+                        # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
+                        #                        min=min_p, max=max_p)
                     else:
-                        flag = flag + 1
-                        team_new.students.append(stu)
-                        # com.students.append(stu)
+                        if stu in com.students:
+                            pass
+                        else:
+                            flag = flag + 1
+                            team_new.students.append(stu)
+                            # com.students.append(stu)
             if flag != len(ctr):
-                print("no")
                 flash('报名不成功,请重新组建队伍')
                 return redirect(url_for('home', id=id, identity=identity))
             else:
-                flash('报名成功')
-                com.teams.append(team_new)
-                for stu in team_new.students:
-                    com.students.append(stu)
-                db.session.commit()
-                return redirect(url_for('home', id=id, identity=identity))
+                if len(ctr) > max_p or len(ctr) < min_p:
+                    flash('人数安排不合理')
+                    # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
+                    #                        min=min_p, max=max_p)
+                else:
+                    flash('报名成功')
+                    com.teams.append(team_new)
+                    for stu in team_new.students:
+                        com.students.append(stu)
+                    db.session.commit()
+                    return redirect(url_for('home', id=id, identity=identity))
         else:
             print('else')
             return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
@@ -693,7 +703,7 @@ def home(id, identity):
 
 
 @app.route('/<identity>/<id>/<name>/list_search')
-def com_list_search(identity,id, name):
+def com_list_search(identity, id, name):
     com_infos = Com_info.query.filter(Com_info.name.like \
                                           ('%{}%'.format(name))).all()
     return render_template('com_list_search.html', id=id, identity=identity, com_infos=com_infos)
@@ -701,7 +711,7 @@ def com_list_search(identity,id, name):
 
 @app.route('/<identity>/<id>/<flag>/com_list', methods=['GET', 'POST'])
 def com_list(id, identity, flag):
-    form =SearchForm()
+    form = SearchForm()
     # db.session.close()
     if form.validate_on_submit():
         com_infos = Com_info.query.filter(Com_info.name.like \
@@ -713,8 +723,8 @@ def com_list(id, identity, flag):
         length = len(com_infos)
         page = length / 5
         return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos, page=int(page),
-                           flag=int(flag), form=form
-                           )
+                               flag=int(flag), form=form
+                               )
 
 
 @app.route('/<identity>/<id>/notice_list')

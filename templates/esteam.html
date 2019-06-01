@@ -202,13 +202,17 @@ function insRow()
 {
     var len = document.getElementById('team').rows.length;
     var x=document.getElementById('team').insertRow(1);
-    var y=x.insertCell(0);
-    var z=x.insertCell(1);
-    var t=x.insertCell(2);
-    alert("添加成功");
-    y.innerHTML=document.getElementById('stu_name').value;
+    if(document.getElementById('stu_name').value&&document.getElementById('stu_age').value&&document.getElementById('stu_dept').value){
+        var y=x.insertCell(0);
+        var z=x.insertCell(1);
+        var t=x.insertCell(2);
+        y.innerHTML=document.getElementById('stu_name').value;
     z.innerHTML=document.getElementById('stu_age').value;
     t.innerHTML=document.getElementById('stu_dept').value;
+    }
+    else{
+        alert('信息不全');
+    }
     document.getElementById('stu_name').value = "";
     document.getElementById('stu_age').value = "";
     document.getElementById('stu_dept').value = ""

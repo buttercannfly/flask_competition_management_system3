@@ -182,7 +182,7 @@ com_info1 = Com_info(name='程序设计大赛', sign_time='2019-04-01', start_ti
                      com_place='校内', com_level='省级', org_party='华为校园部', put_time='2019-03-12', teacher='赵四',
                      pattern='个人',
                      abstract='星期五晚上8.30在信息馆有宣讲会', award='一等奖 二等奖 三等奖', assign='1 1 1')
-com_info2 = Com_info(name='浙江省英语写作比赛', sign_time='2019-05-28', start_time='2019-05-29', end_time='2019-05-30',
+com_info2 = Com_info(name='浙江省英语写作比赛', sign_time='2019-06-28', start_time='2019-06-29', end_time='2019-06-30',
                      com_place='校内', com_level='省级', org_party='教务处', put_time='2019-03-12', pattern='1-4',
                      teacher='肖桐 马冬梅',
                      holder='生物学院', abstract='3.25号晚上在一号楼A401有宣讲会', award='优胜奖', assign='1')
