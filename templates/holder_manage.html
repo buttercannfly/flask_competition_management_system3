@@ -138,6 +138,8 @@
                 <th>主办方</th>
                 <th>用户名</th>
                 <th>密码</th>
+                <th></th>
+                <th></th>
             </tr>
           </thead>
           <tbody>
@@ -146,6 +148,12 @@
                 <td>{{ ll.name }}</td>
                 <td>{{ ll.id }}</td>
                 <td>{{ ll.password }}</td>
+                <td>
+                    <a class="btn btn-sm btn-dark" href="{{ url_for('edit_holder',id=id,identity=identity,flag=ll.id) }}">修改信息</a>
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-dark" href="{{ url_for('remove_holder',id=id,identity=identity,flag=ll.id) }}">删除</a>
+                </td>
               </tr>
           {% endfor %}
           </tbody>

@@ -1,33 +1,3 @@
-{##}
-{#{% block content %}#}
-{#    <form role="form" method="post">#}
-{#        <div class="form-group">#}
-{#            <label for="name">竞赛名称</label>#}
-{#            <input type="text" class="form-control" id="name" placeholder="请输入竞赛名称" name="name">#}
-{#        </div>#}
-{#        <div class="form-group">#}
-{#            <label for="sign_time">报名截止时间</label>#}
-{#            <input type="date" class="form-control" id="sign_time" placeholder="请输入报名截止时间" name="sign_time">#}
-{#        </div>#}
-{#        <div class="form-group">#}
-{#            <label for="begin_time">竞赛时间</label>#}
-{#            <input type="date" class="form-control" id="time" placeholder="请输入起始日期" name="time">#}
-{#        </div>#}
-{#        <div class="form-group">#}
-{#            <label for="end_time">竞赛结束时间</label>#}
-{#            <input type="date" class="form-control" id="end_time" placeholder="请输入结束日期" name="end_time">#}
-{#        </div>#}
-{#        <div class="form-group form-group-lg">#}
-{#            <label for="simplify">简介</label>#}
-{#            <input type="text" class="form-control" id="simplify" placeholder="请输入竞赛简介" name="simplify">#}
-{#        </div>#}
-{#        <div class="form-group form-group-lg">#}
-{#            <label for="file">附件</label>#}
-{#            <input type="file" class="form-control" id="file" name="file">#}
-{#        </div>#}
-{#        <button type="submit" class="btn btn-default">提交</button>#}
-{#    </form>#}
-{#{% endblock %}#}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -123,57 +93,12 @@
       </div>
     </div>
   </div>
-  <div style="width: 100%">
-      <div><form method="post" style="width: 100%">
-  <h5>添加老师信息</h5><br>
-              <input type="text" id="name" placeholder="请输入名字" name="name" class="form-control"> <br>
-              <input type="text" id="id" placeholder="请输入id" name="id" class="form-control"> <br>
-              <input type="text" id="password" placeholder="请输入password" name="password" class="form-control"><br>
-              <input type="text" id="academic" placeholder="请输入学院" name="academic" class="form-control"> <br>
-              <input type="text" id="email" placeholder="请输入邮箱" name="email" class="form-control"> <br>
-  <button class="btn btn-dark">提交</button>
-          <hr></form></div>
-  <div style="width: 100%">
-      <table class="table table-hover" style="width: 100%">
-          <thead>
-            <tr>
-                <th>老师姓名</th>
-                <th>用户名</th>
-                <th>密码</th>
-                <th>学院</th>
-                <th>邮箱</th>
-                <th></th>
-                <th></th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for ll in  list %}
-              <tr>
-                <td>{{ ll.name }}</td>
-                <td>{{ ll.id }}</td>
-                <td>{{ ll.password }}</td>
-                <td>{{ ll.academic }}</td>
-                <td>{{ ll.email }}</td>
-              <td>
-                  <a class="btn btn-dark btn-sm" href="{{ url_for('edit_teacher',id=id,identity=identity,flag=ll.id) }}">修改资料</a>
-              </td>
-              <td>
-                  <a class="btn btn-dark btn_sm" href="{{ url_for('remove_teacher',id=id,identity=identity,flag=ll.id) }}">删除</a>
-              </td>
-              </tr>
-          {% endfor %}
-          </tbody>
-      </table>
-  </div>
-  <div style="width: 100%">
-          <div>
-              {% for message in get_flashed_messages() %}
-                    <div class="alert alert-success" style="text-align: center">
-                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                        <strong>{{ message }}</strong></div>
-                {% endfor %}
-          </div></div>
-
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+      <div>
+            {{ wtf.quick_form(form) }}
+      </div>
+{% endblock %}
 
 
   <!-- Bootstrap core JavaScript-->

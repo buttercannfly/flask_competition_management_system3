@@ -3,9 +3,12 @@ import random
 from flask import Flask, render_template, redirect, url_for, request, flash, g, current_app, make_response, session
 from flask_bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
-from wtforms import Form, TextField, PasswordField, validators
+from wtforms import Form, TextField, PasswordField, validators, StringField, SubmitField
 from flask_cors import *
+from flask_wtf import FlaskForm
 from flask_login import UserMixin, LoginManager, login_required, login_user
+from wtforms.validators import Required
+
 import hello
 import datetime
 import os
@@ -69,6 +72,70 @@ class InfoForm(Form):
     simplify = TextField("simplify", [validators.Required()])
 
 
+class Edit_tea_Form(FlaskForm):
+    id = StringField('id', validators=[Required()])
+    password = StringField('password', validators=[Required()])
+    name = StringField('name', validators=[Required()])
+    academic = StringField('academic', validators=[Required()])
+    email = StringField('email', validators=[Required()])
+    submit = SubmitField('修改')
+
+
+class Edit_holder_Form(FlaskForm):
+    id = StringField('id', validators=[Required()])
+    password = StringField('password', validators=[Required()])
+    name = StringField('name', validators=[Required()])
+    submit = SubmitField('修改')
+
+
+@app.route('/<identity>/<id>/<flag>/edit_holder', methods=['GET', 'POST'])
+def edit_holder(id, identity, flag):
+    form = Edit_holder_Form()
+    holder = Holder.query.filter_by(id=flag).first()
+    if form.validate_on_submit():
+        holder.id = form.id.data
+        holder.password = form.password.data
+        holder.name = form.name.data
+        db.session.commit()
+        flash('修改成功')
+        return redirect(url_for('holder_manage', id=id, identity=identity))
+    return render_template('edit_holder.html', id=id, identity=identity,form=form)
+
+
+@app.route('/<identity>/<id>/<flag>/remove_holder', methods=['GET', 'POST'])
+def remove_holder(id, identity, flag):
+    hold = Holder.query.filter_by(id=flag).first()
+    db.session.delete(hold)
+    db.session.commit()
+    flash('删除成功')
+    return redirect(url_for('holder_manage', id=id, identity=identity))
+
+
+@app.route('/<identity>/<id>/<flag>/edit_teacher', methods=['GET', 'POST'])
+def edit_teacher(id, identity, flag):
+    tea = Teacher.query.filter_by(id=flag).first()
+    form = Edit_tea_Form()
+    if form.validate_on_submit():
+        tea.id = form.id.data
+        tea.name = form.name.data
+        tea.password = form.password.data
+        tea.academic = form.academic.data
+        tea.email = form.academic.data
+        db.session.commit()
+        flash('修改成功')
+        return redirect(url_for('teacher_manage', id=id, identity=identity))
+    return render_template('edit_teacher.html', id=id, identity=identity, form=form)
+
+
+@app.route('/<identity>/<id>/<flag>/remove_teacher', methods=['GET', 'POST'])
+def remove_teacher(id, identity, flag):
+    tea = Teacher.query.filter_by(id=flag).first()
+    db.session.delete(tea)
+    db.session.commit()
+    flash('删除成功')
+    return redirect(url_for('teacher_manage', id=id, identity=identity))
+
+
 @app.route('/<identity>/<id>/award_list')
 def award_list(id, identity):
     sql = " SELECT * FROM table_stu_com"
@@ -97,7 +164,7 @@ def award_list(id, identity):
     size1 = len(team_list)
     return render_template('award_list.html', id=id, identity=identity, stu_list=stu_list, com_stu_list=com_stu_list,
                            grade_stu=grade_stu, team_list=team_list, com_team_list=com_team_list, grade_team=grade_team,
-                           size=size,size1=size1)
+                           size=size, size1=size1)
 
 
 @app.route('/<identity>/<id>/teacher_manage', methods=['GET', 'POST'])
