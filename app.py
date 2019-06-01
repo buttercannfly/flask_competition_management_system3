@@ -88,6 +88,11 @@ class Edit_holder_Form(FlaskForm):
     submit = SubmitField('修改')
 
 
+class SearchForm(FlaskForm):
+    name = StringField('名称', validators=[Required()])
+    submit = SubmitField('搜索')
+
+
 @app.route('/<identity>/<id>/<flag>/edit_holder', methods=['GET', 'POST'])
 def edit_holder(id, identity, flag):
     form = Edit_holder_Form()
@@ -687,14 +692,28 @@ def home(id, identity):
                            com_infos=com_infos, notice_list=notice_list)
 
 
-@app.route('/<identity>/<id>/<flag>/com_list')
+@app.route('/<identity>/<id>/<name>/list_search')
+def com_list_search(identity,id, name):
+    com_infos = Com_info.query.filter(Com_info.name.like \
+                                          ('%{}%'.format(name))).all()
+    return render_template('com_list_search.html', id=id, identity=identity, com_infos=com_infos)
+
+
+@app.route('/<identity>/<id>/<flag>/com_list', methods=['GET', 'POST'])
 def com_list(id, identity, flag):
-    com_infos = Com_info.query.all()
-    length = len(com_infos)
-    page = length / 5
-    db.session.close()
-    return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos, page=int(page),
-                           flag=int(flag)
+    form =SearchForm()
+    # db.session.close()
+    if form.validate_on_submit():
+        com_infos = Com_info.query.filter(Com_info.name.like \
+                                              ('%{}%'.format(form.name.data))).all()
+        print(com_infos)
+        return redirect(url_for('com_list_search', id=id, identity=identity, name=form.name.data))
+    else:
+        com_infos = Com_info.query.all()
+        length = len(com_infos)
+        page = length / 5
+        return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos, page=int(page),
+                           flag=int(flag), form=form
                            )
 
 
