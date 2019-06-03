@@ -141,6 +141,29 @@
             {% if identity == '老师' %}
                 学院：{{ lt.academic }}<br>
                 email:{{ lt.email }}<br>
+                <div style="width: 100%">
+                    <table class="table-hover table">
+                        <thead>
+                            <tr>
+                                <th>负责竞赛</th>
+                                <th>状态</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for ll in lst %}
+                            <tr>
+                                <td>{{ ll.name }}</td>
+                                {% if ll.status == 0 %}<td>比赛结束</td>{% endif %}
+                                {% if ll.status == 1 %}<td>报名中</td>{% endif %}
+                            {% if ll.status == 2 %}<td>进行中</td>{% endif %}
+                            {% if ll.status == 3 %}<td>报名截止</td>{% endif %}
+                            <td><a href="{{ url_for('detail',id=id,identity=identity,name=ll.name) }}">link</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
       {% endif %}
       {% if identity == '管理员' %}
           <a class="btn btn-primary btn-block" href={{ url_for('raise_answer',id=id,identity=identity) }}>发布通知公告</a><br>

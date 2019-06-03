@@ -266,13 +266,22 @@ def self_center(id, identity):
             for ll in temp:
                 grade_list.append((ll[0]))
     elif identity == '老师':
+        com_all = Com_info.query.all()
+        tea = Teacher.query.filter_by(id=id).first()
+        name = tea.name
+        lst = []
+        for com in com_all:
+            if name in com.teacher:
+                lst.append(com)
+        print(lst)
         lt = Teacher.query.filter_by(id=id).first()
     elif identity == '赛事主办方':
         lt = Holder.query.filter_by(id=id).first()
     else:
         lt = Monitor.query.filter_by(id=id).first()
     db.session.close()
-    return render_template("self_center.html", id=id, identity=identity, lt=lt, grade_list=grade_list, length=length)
+    return render_template("self_center.html", id=id, identity=identity, lt=lt, grade_list=grade_list, length=length,
+                           lst=lst)
 
 
 @app.route('/<identity>/<id>/reset', methods=['GET', 'POST'])
@@ -430,7 +439,7 @@ def team_manage(id, identity, name, index):
         else:
             com_temp.status = 0
             db.session.commit()
-            return render_template('com_list.html', id=id, identity=identity, com_infos=com_infos)
+            return redirect(url_for('home', id=id, identity=identity))
     length = len(award_list)
     # print(team_list[int(index)].students)
     # let =3
@@ -498,30 +507,23 @@ def esteam(id, identity, name):
                 stu_name = ctr[i]['NAME']
                 stu = Student.query.filter_by(name=stu_name).first()
                 if stu is None:
-                    flash('系统不存在'+stu_name+'学生')
+                    flash('系统不存在' + stu_name + '学生')
                     print('bucunzai')
-                    # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
-                    #                        min=min_p, max=max_p)
                 else:
                     if stu in team_new.students:
                         flash(stu.name + '已存在')
-                        # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
-                        #                        min=min_p, max=max_p)
                     else:
                         if stu in com.students:
                             pass
                         else:
                             flag = flag + 1
                             team_new.students.append(stu)
-                            # com.students.append(stu)
             if flag != len(ctr):
                 flash('报名不成功,请重新组建队伍')
                 return redirect(url_for('home', id=id, identity=identity))
             else:
                 if len(ctr) > max_p or len(ctr) < min_p:
                     flash('人数安排不合理')
-                    # return render_template('esteam.html', id=id, identity=identity, name=name, student=student1,
-                    #                        min=min_p, max=max_p)
                 else:
                     flash('报名成功')
                     com.teams.append(team_new)
